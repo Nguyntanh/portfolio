@@ -95,7 +95,7 @@ const ARTIFACT_TABS: ArtifactTab[] = [
       {
         title: "Sequence Diagram Luồng Nhập/Xuất kho Atomic Transaction",
         type: "Diagram",
-        link: "https://app.diagrams.net/#G1kQFuk7Wm2_ZUOKw4bIoYkpGTntvhFDeo#%7B%22pageId%22%3A%22oBJV3Z6j8f0KfGirI5Sk%22%7D",
+        link: "https://app.diagrams.net/#G1kQFuk7Wm2_ZUOKw4bIoYkpGTntvhFDeo#%7B%22pageId%22%3A%22HB_me9jukh97eeU58cv6%22%7D",
       },
     ],
   },

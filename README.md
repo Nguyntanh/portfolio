@@ -1,75 +1,42 @@
-# React + TypeScript + Vite
+# Nguyễn Tuấn Anh - Technical Business Analyst Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfolio cá nhân chuyên sâu về **Technical Business Analysis**, **System Architecture**, **Data Modeling (3NF)** và **Process Optimization**.
 
-Currently, two official plugins are available:
+## 📌 Tổng Quan Hệ Thống
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Portfolio được thiết kế với chuẩn thẩm mỹ cao cấp, cấu trúc module tinh gọn và logic trình bày sắc bén gồm 5 phân hệ cốt lõi:
 
-## React Compiler
+1. **Hero Section**: Huy hiệu chuyên môn, tuyên ngôn giá trị (Value Proposition), Dual CTA và chỉ số đo lường năng lực thiết kế hệ thống.
+2. **Featured Technical Projects**: Phân tích chuyên sâu 2 dự án chuẩn enterprise:
+   - **Smart WMS** (Hệ thống quản trị kho hàng thông minh): AI Slotting Heuristic, định tuyến S-Shape, kiểm soát khóa bi quan (Pessimistic Locking) trên MySQL InnoDB triệt tiêu 100% Race Condition.
+   - **InternHub** (Nền tảng quản trị vòng đời nhân tài): Finite State Machine (FSM), kiểm soát phân quyền PBAC/ABAC, chống Deadlock tuần tự hóa và Immutable JSONB Snapshot.
+3. **Technical Skills & Core Competencies**: Ma trận năng lực 4 tầng kiến trúc:
+   - *Tầng 1*: Backend, APIs & System Integration
+   - *Tầng 2*: Database, Persistence & Data Governance
+   - *Tầng 3*: Frontend, UI/UX & Requirements Modeling
+   - *Tầng 4*: Security, DevOps & Delivery Engineering
+4. **Experiences & Delivery Milestones**: Hành trình chuyển giao giá trị thực tế theo phương pháp luận Agile/Scrum khép kín.
+5. **Footer & Contact Hub**: Availability Badge, kênh liên hệ trực tiếp (Click-to-Copy Email, Phone/Zalo), tải Resume PDF một chạm và cam kết chuẩn mực kỹ thuật.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Công Nghệ Phát Triển
 
-## Expanding the ESLint configuration
+- **Core**: React 19, TypeScript
+- **Bundler & Tooling**: Vite 8, ESLint
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React + Brand SVGs
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Khởi Chạy Local
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Cài đặt dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Khởi chạy môi trường phát triển
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Kiểm tra chất lượng mã nguồn
+npm run lint
 
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+# Build bản release sản phẩm
+npm run build
 ```

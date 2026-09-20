@@ -85,12 +85,6 @@ interface FeaturedProject {
   actionLinks: ProjectActionLink[];
 }
 
-interface ArtifactTab {
-  id: string;
-  label: string;
-  items: { title: string; type: string; link: string }[];
-}
-
 // --- FEATURED PROJECTS DATA ---
 const FEATURED_PROJECTS: FeaturedProject[] = [
   {
@@ -205,7 +199,7 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
       },
       {
         label: "Live Demo Web/PDA",
-        href: "#system-specs",
+        href: "https://github.com/Nguyntanh",
       },
       {
         label: "System Architecture",
@@ -324,7 +318,7 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
       },
       {
         label: "Interactive API Contract",
-        href: "#system-specs",
+        href: "https://github.com/Nguyntanh",
       },
       {
         label: "Traceability Matrix",
@@ -665,59 +659,7 @@ const EXPERIENCE_MILESTONES: ExperienceMilestone[] = [
   },
 ];
 
-const ARTIFACT_TABS: ArtifactTab[] = [
-  {
-    id: "diagrams",
-    label: "System Diagrams & Modeling",
-    items: [
-      {
-        title: "Sơ đồ ERD Kho hàng với Khóa BIGINT",
-        type: "Png",
-        link: "https://drive.google.com/file/d/1P_q_Hx_45JcbDUd29pf-kJT2Ei4gstTT/view?usp=sharing",
-      },
-      {
-        title: "Sequence Diagram Luồng Nhập/Xuất kho Atomic Transaction",
-        type: "Diagram",
-        link: "https://app.diagrams.net/#G1kQFuk7Wm2_ZUOKw4bIoYkpGTntvhFDeo#%7B%22pageId%22%3A%22HB_me9jukh97eeU58cv6%22%7D",
-      },
-    ],
-  },
-  {
-    id: "specs",
-    label: "System Specifications & APIs",
-    items: [
-      {
-        title: "Tài liệu SRS InternHub chuẩn IEEE 830",
-        type: "Docx",
-        link: "https://docs.google.com/document/d/1U6ADSXSfRyiW42ywHLn82vSgylrpAGMT/edit?usp=sharing&ouid=114608328006379285745&rtpof=true&sd=true",
-      },
-      {
-        title: "Swagger RESTful API Docs & Payload Contracts",
-        type: "OpenAPI",
-        link: "#",
-      },
-    ],
-  },
-  {
-    id: "agile",
-    label: "Agile & Backlog Management",
-    items: [
-      {
-        title: "Mẫu User Story & Acceptance Criteria (AC)",
-        type: "Spreadsheet",
-        link: "https://docs.google.com/spreadsheets/d/1zVIbDtfJkyEGt5okfbXjclGB__9PIiMGkb3hP8D4jTI/edit?usp=sharing",
-      },
-      {
-        title: "Ma trận Phân quyền RBAC Matrix (5 Roles)",
-        type: "Spreadsheet",
-        link: "https://docs.google.com/spreadsheets/d/1aPIpiZBx37L2-iXq7i_jC4ik8m0jS4QYfZ4oX9N9SM8/edit?usp=sharing",
-      },
-    ],
-  },
-];
-
 export default function Portfolio() {
-  const [activeTab, setActiveTab] = useState<string>("diagrams");
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
 
   const handleCopyEmail = () => {
@@ -731,16 +673,52 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-[#2563EB] selection:text-white">
       {/* HEADER */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200 shadow-sm">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b border-slate-200/90 shadow-2xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <span className="font-extrabold text-lg md:text-xl tracking-tight text-slate-900">
-            TUAN ANH <span className="text-[#2563EB]">.BA</span>
-          </span>
+          <a
+            href="#"
+            className="font-extrabold text-lg md:text-xl tracking-tight text-slate-900 hover:opacity-90 transition-opacity flex items-center gap-1.5"
+          >
+            <span>TUAN ANH</span>
+            <span className="text-xs font-mono font-black px-1.5 py-0.5 rounded bg-blue-50 text-[#2563EB] border border-blue-200/80">
+              .BA
+            </span>
+          </a>
+
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6 text-xs lg:text-sm font-semibold text-slate-600">
+            <a
+              href="#projects"
+              className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
+            >
+              Dự án thực tế
+            </a>
+            <a
+              href="#skills"
+              className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
+            >
+              Kỹ năng kỹ thuật
+            </a>
+            <a
+              href="#experience"
+              className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
+            >
+              Cột mốc kinh nghiệm
+            </a>
+            <a
+              href="#contact"
+              className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
+            >
+              Liên hệ
+            </a>
+          </nav>
+
           <a
             href="#contact"
             className="text-xs md:text-sm font-semibold bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all shadow-md shadow-blue-500/20 active:scale-95 flex items-center gap-2"
           >
-            <Mail className="w-4 h-4" /> Liên Hệ Ngay
+            <Mail className="w-4 h-4" />
+            <span>Liên Hệ Ngay</span>
           </a>
         </div>
       </header>
@@ -1380,67 +1358,6 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* 5. INTERACTIVE ARTIFACTS SHOWCASE */}
-      <section id="system-specs" className="py-16 border-b border-slate-200 bg-slate-50 scroll-mt-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl font-bold mb-8 text-slate-900 tracking-tight">
-            Interactive Artifacts Showcase
-          </h2>
-
-          {/* Tab Navigation */}
-          <div
-            className="flex border-b border-slate-200 overflow-x-auto mb-6"
-            role="tablist"
-          >
-            {ARTIFACT_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                role="tab"
-                aria-selected={activeTab === tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-5 py-3 font-semibold text-sm whitespace-nowrap transition-all border-b-2 ${
-                  activeTab === tab.id
-                    ? "border-[#2563EB] text-[#2563EB] bg-white rounded-t-lg"
-                    : "border-transparent text-slate-500 hover:text-slate-900"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Content */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            {ARTIFACT_TABS.map((tab) => {
-              if (tab.id !== activeTab) return null;
-              return (
-                <div key={tab.id} className="grid md:grid-cols-2 gap-4">
-                  {tab.items.map((item, idx) => (
-                    <a
-                      key={idx}
-                      href={item.link}
-                      className="flex items-center justify-between p-4 bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-200 rounded-xl transition-all group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="text-[#2563EB] w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" />
-                        <div>
-                          <div className="text-sm font-semibold text-slate-900 group-hover:text-[#2563EB] transition-colors">
-                            {item.title}
-                          </div>
-                          <span className="text-xs text-slate-500 font-mono">
-                            {item.type}
-                          </span>
-                        </div>
-                      </div>
-                      <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
-                    </a>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* 5. FOOTER & CONTACT SECTION */}
       <footer id="contact" className="pt-20 pb-12 bg-white border-t border-slate-200 relative overflow-hidden">

@@ -310,17 +310,17 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
     ],
     actionLinks: [
       {
-        label: "Xem Hồ Sơ BRD & User Stories",
-        href: "https://docs.google.com/document/d/1U6ADSXSfRyiW42ywHLn82vSgylrpAGMT/edit?usp=sharing&ouid=114608328006379285745&rtpof=true&sd=true",
+        label: "System Specification & FSM (BRD)",
+        href: "https://drive.google.com/file/d/1b_7t6mWdC27bUutBzp_BymuW5kNYZM7t/view?usp=sharing",
         isPrimary: true,
       },
       {
-        label: "Interactive API Contract",
-        href: "https://github.com/Nguyntanh",
+        label: "API Contracts & Error Catalog",
+        href: "https://docs.google.com/spreadsheets/d/1uRIa9cqvaWmvsLtL5lNIetPz_nX8Z6-G8MXU-r7NcBY/edit?usp=sharing",
       },
       {
-        label: "Traceability Matrix",
-        href: "https://docs.google.com/spreadsheets/d/1aPIpiZBx37L2-iXq7i_jC4ik8m0jS4QYfZ4oX9N9SM8/edit?usp=sharing",
+        label: "Edge Cases & Concurrency Risk Matrix",
+        href: "https://docs.google.com/spreadsheets/d/1ePRmhHBshXBfGFiMU9lLguxIRUIyRa8goj6EFtPVnv0/edit?usp=sharing",
       },
     ],
   },

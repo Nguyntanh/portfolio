@@ -191,17 +191,17 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
     ],
     actionLinks: [
       {
-        label: "Xem Đặc Tả Kỹ Thuật (BRD/ERD)",
-        href: "https://drive.google.com/file/d/1P_q_Hx_45JcbDUd29pf-kJT2Ei4gstTT/view?usp=sharing",
+        label: "System Specification & ERD (BRD)",
+        href: "/docs/SmartWMS_Final_Report.pdf#page=23",
         isPrimary: true,
       },
       {
-        label: "Live Demo Web/PDA",
-        href: "https://github.com/Nguyntanh",
+        label: "Algorithm & Architecture Spec",
+        href: "/docs/SmartWMS_Final_Report.pdf#page=17",
       },
       {
-        label: "System Architecture",
-        href: "https://app.diagrams.net/#G1kQFuk7Wm2_ZUOKw4bIoYkpGTntvhFDeo#%7B%22pageId%22%3A%22HB_me9jukh97eeU58cv6%22%7D",
+        label: "Verification & Benchmark Report",
+        href: "/docs/SmartWMS_Final_Report.pdf#page=79",
       },
     ],
   },
@@ -1082,8 +1082,8 @@ export default function Portfolio() {
                       <a
                         key={lIdx}
                         href={link.href}
-                        target={link.href.startsWith("http") ? "_blank" : undefined}
-                        rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                        target={link.href.startsWith("http") || link.href.includes(".pdf") ? "_blank" : undefined}
+                        rel={link.href.startsWith("http") || link.href.includes(".pdf") ? "noreferrer" : undefined}
                         className={`px-4 py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-xs active:scale-95 group/btn ${
                           link.isPrimary
                             ? "bg-blue-600 hover:bg-blue-700 text-white"

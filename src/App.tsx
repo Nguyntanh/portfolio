@@ -56,11 +56,9 @@ interface CaseStudy {
   title: string;
   role: string;
   scale: string;
-  context: string;
   starDescription: ReactNode;
   actions: ProjectActionItem[];
   metrics: ProjectMetric[];
-  results: ReactNode[];
   artifacts: string[];
   techStack: string[];
   links: ProjectLink[];
@@ -74,8 +72,6 @@ const CASE_STUDIES: CaseStudy[] = [
     title: "Smart WMS (Hệ thống Quản lý Kho thông minh)",
     role: "Technical Business Analyst (Core System Modeler)",
     scale: "Nhóm 5 kỹ sư | Chu kỳ 4 tháng (06/2026 – 09/2026)",
-    context:
-      "Nền tảng quản trị kho hàng đa chi nhánh giải quyết bài toán lãng phí thể tích lưu trữ (25–40%), rút ngắn thời gian gom hàng và loại bỏ nguy cơ xuất âm kho do tranh chấp dữ liệu khi nhiều nhân viên cùng xử lý một mã hàng (SKU).",
     starDescription: (
       <span>
         Đối mặt với bài toán lãng phí 25–40% thể tích kho và rủi ro xuất âm khi nhiều nhân viên nhặt cùng SKU, tôi trực tiếp chuẩn hóa SRS với 10 quy tắc nghiệp vụ bất biến cho 4 luồng Inbound, Outbound, Put-away, Picking qua 12+ sơ đồ UML. Về mặt kiến trúc dữ liệu, tôi thiết kế Data Dictionary cho 18 bảng chuẩn 3NF, đồng thời phối hợp đặc tả giải pháp Row-level Pessimistic Locking (
@@ -87,16 +83,16 @@ const CASE_STUDIES: CaseStudy[] = [
     ),
     actions: [
       {
-        title: "Quy chuẩn hóa nghiệp vụ",
+        title: "Quy chuẩn hóa SRS & 10 Bất biến",
         detail: (
           <span>
-            Xây dựng tài liệu SRS và chuẩn hóa 10 quy tắc nghiệp vụ bất biến cho 4 luồng vận hành:{" "}
+            Xây dựng tài liệu SRS chuẩn mực với 10 quy tắc nghiệp vụ bất biến cho 4 luồng vận hành:{" "}
             <strong>Inbound, Put-away, Picking, Outbound</strong> qua 12+ sơ đồ Use Case và Sequence Diagrams.
           </span>
         ),
       },
       {
-        title: "Mô hình hóa không gian 3D",
+        title: "Mô hình hóa Không gian 3D & Định tuyến",
         detail: (
           <span>
             Chuyển hóa bài toán xếp dỡ thành tập ràng buộc kỹ thuật (tải trọng, thể tích 3 chiều, tần suất quay vòng SKU theo{" "}
@@ -105,14 +101,14 @@ const CASE_STUDIES: CaseStudy[] = [
         ),
       },
       {
-        title: "Toàn vẹn dữ liệu & Concurrency",
+        title: "Data Dictionary 3NF & Khóa Bi quan",
         detail: (
           <span>
-            Thiết kế Data Dictionary cho 18 bảng chuẩn 3NF, xác lập công thức Tồn khả dụng bất biến (
+            Thiết kế Data Dictionary cho 18 bảng chuẩn 3NF, xác lập công thức Tồn khả dụng thời gian thực (
             <code className="bg-slate-100 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">
               Available = OnHand - Reserved - Frozen
             </code>
-            ) và đặc tả khóa bi quan (
+            ) và đặc tả khóa bi quan cấp dòng (
             <code className="bg-slate-100 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">
               SELECT ... FOR UPDATE
             </code>
@@ -124,7 +120,7 @@ const CASE_STUDIES: CaseStudy[] = [
     metrics: [
       {
         value: "0%",
-        label: "Bất nhất dữ liệu",
+        label: "Data Drift (Bất nhất)",
         sub: "Triệt tiêu Race Condition & xuất âm kho",
       },
       {
@@ -135,20 +131,8 @@ const CASE_STUDIES: CaseStudy[] = [
       {
         value: "-58.5%",
         label: "Quãng đường nhặt hàng",
-        sub: "Tăng tỷ lệ lấp đầy thể tích từ 58.4% lên 81.2%",
+        sub: "Tăng 22.8% dung tích khai thác kho",
       },
-    ],
-    results: [
-      (
-        <p key="r1" className="text-slate-600 leading-relaxed text-sm">
-          <strong className="text-slate-900 font-semibold">Toàn vẹn tồn kho:</strong> Loại bỏ hoàn toàn rủi ro xuất âm kho và sai lệch tồn khả dụng trên môi trường thực nghiệm; nghiệm thu đạt tỷ lệ bất nhất dữ liệu bằng 0 qua 1.000 test case đồng thời (500 Virtual Users, 412 TPS, P95 &lt; 380ms) nhờ công thức tồn khả dụng thời gian thực kết hợp Row-level Pessimistic Locking trên MySQL InnoDB.
-        </p>
-      ),
-      (
-        <p key="r2" className="text-slate-600 leading-relaxed text-sm">
-          <strong className="text-slate-900 font-semibold">Hiệu suất vận hành:</strong> Cắt giảm 58.5% quãng đường di chuyển (từ 1.842m xuống 765m/đợt) và nâng tỷ lệ lấp đầy thể tích từ 58.4% lên 81.2% (tăng 22.8% dung tích khai thác) qua mô hình mô phỏng 1.000 vị trí ô chứa (Bins) với thuật toán định tuyến S-Shape và ma trận ABC.
-        </p>
-      ),
     ],
     artifacts: [
       "SRS & Business Invariants Spec",
@@ -178,8 +162,6 @@ const CASE_STUDIES: CaseStudy[] = [
     title: "InternHub (Nền tảng Quản trị Thực tập sinh)",
     role: "Technical Business Analyst (Workflows & Architecture)",
     scale: "Nhóm 5 kỹ sư | 5 Sprints (01/2026 – 04/2026)",
-    context:
-      "Số hóa toàn diện vòng đời thực tập sinh thay thế quy trình thủ công qua Excel/Zalo; tự động hóa cấp và thu hồi quyền truy cập, giảm tải tác vụ hành chính và chuẩn hóa thang đo thẩm định năng lực đa chiều.",
     starDescription: (
       <span>
         Nhằm số hóa quy trình quản lý thực tập sinh phân tán qua Excel và kiểm soát độ lệch điểm đánh giá cảm tính, tôi chịu trách nhiệm phân rã 33 INVEST User Stories và chuẩn hóa 38 RESTful API Contracts kèm Error Catalog trên OpenAPI. Về thiết kế lõi, tôi xây dựng Data Dictionary 26 bảng, ứng dụng Finite State Machine (FSM) và cấu trúc JSONB Snapshots đóng băng tiêu chí Rubric nhằm đảm bảo toàn vẹn dữ liệu truy vết (Audit Trail). Giải pháp giúp đội ngũ bàn giao <strong>100% phạm vi MVP</strong> đúng hạn qua 5 Sprints, cắt giảm hơn 70% thao tác xử lý thủ công và xử lý import streaming &gt; 1.000 bản ghi trong 30 giây qua hàng đợi BullMQ.
@@ -187,7 +169,7 @@ const CASE_STUDIES: CaseStudy[] = [
     ),
     actions: [
       {
-        title: "Chuẩn hóa luồng & API Contracts",
+        title: "33 INVEST Stories & 38 API Contracts",
         detail: (
           <span>
             Phân rã 33 INVEST User Stories, quản trị Sprint Backlog, chuẩn hóa 38 RESTful API Contracts (OpenAPI kèm Error Catalog chi tiết) giúp đội ngũ bàn giao 100% phạm vi MVP đúng hạn qua 5 Sprints.
@@ -195,15 +177,15 @@ const CASE_STUDIES: CaseStudy[] = [
         ),
       },
       {
-        title: "Bảo vệ dữ liệu lịch sử",
+        title: "Data Dictionary 26 Bảng & Audit Trail",
         detail: (
           <span>
-            Thiết kế Data Dictionary cho 26 bảng, đặc tả cấu trúc JSONB Snapshots đóng băng tiêu chí chấm Rubric tại thời điểm đánh giá và cơ chế Append-Only Audit Trail nhằm bảo toàn dữ liệu.
+            Thiết kế Data Dictionary cho 26 bảng, máy trạng thái FSM 8 phân hệ, đặc tả cấu trúc JSONB Snapshots đóng băng tiêu chí chấm Rubric tại thời điểm đánh giá và cơ chế Append-Only Audit Trail nhằm bảo toàn dữ liệu.
           </span>
         ),
       },
       {
-        title: "Xử lý nền & Chống Deadlock",
+        title: "Xử lý nền BullMQ & Chống Deadlock",
         detail: (
           <span>
             Đặc tả hàng đợi BullMQ/Redis để import streaming file dữ liệu &gt; 1.000 dòng trong 30 giây, quy định cơ chế khóa tuần tự (
@@ -218,8 +200,8 @@ const CASE_STUDIES: CaseStudy[] = [
     metrics: [
       {
         value: "> 70%",
-        label: "Thời gian xử lý thủ công",
-        sub: "Cắt giảm trong toàn bộ vòng đời thực tập sinh",
+        label: "Giảm thao tác thủ công",
+        sub: "Tự động hóa toàn bộ vòng đời thực tập sinh",
       },
       {
         value: "< 500ms",
@@ -229,20 +211,8 @@ const CASE_STUDIES: CaseStudy[] = [
       {
         value: "100%",
         label: "Kiểm toán phiếu chấm",
-        sub: "Cảnh báo độ lệch điểm và đóng băng Rubric",
+        sub: "Cảnh báo độ lệch điểm & đóng băng Rubric",
       },
-    ],
-    results: [
-      (
-        <p key="r1" className="text-slate-600 leading-relaxed text-sm">
-          <strong className="text-slate-900 font-semibold">Hiệu quả vận hành:</strong> Cắt giảm hơn 70% thời gian xử lý thủ công trong toàn bộ vòng đời thực tập sinh; tốc độ thu hồi phiên truy cập dưới 500ms và độ trễ API Dashboard đạt P95 &lt; 300ms nhờ thiết lập máy trạng thái (FSM) 8 phân hệ kết hợp Redis Blacklist phân tán và hàng đợi BullMQ.
-        </p>
-      ),
-      (
-        <p key="r2" className="text-slate-600 leading-relaxed text-sm">
-          <strong className="text-slate-900 font-semibold">Tính khách quan dữ liệu:</strong> Loại bỏ hoàn toàn rủi ro sai lệch dữ liệu đánh giá và kiểm soát độ lệch điểm cảm tính; 100% phiếu chấm được kiểm toán toàn vẹn kèm cờ cảnh báo biên độ lệch |S_self - S_mentor| &gt; 3.0 thông qua cơ chế Blind Review song song và Immutable JSONB Snapshots.
-        </p>
-      ),
     ],
     artifacts: [
       "33 INVEST User Stories & Acceptance Criteria",
@@ -363,49 +333,73 @@ interface MilestoneItem {
 const MILESTONES: MilestoneItem[] = [
   {
     period: "06/2026 – 09/2026",
-    project: "Hệ thống Quản lý Kho hàng Thông minh (Smart WMS)",
+    project: "Smart WMS (Quản lý Kho thông minh)",
     affiliation: "Đồ án Kỹ thuật Phần mềm Xuất sắc – Đại học CMC",
     role: "Technical Business Analyst (Core System Modeler)",
-    team: "Nhóm 5 thành viên (Full-stack) · Agile/Scrum",
+    team: "Nhóm 5 kỹ sư · Scrum 4 tháng",
     highlights: [
       {
-        title: "Đặc tả luồng kho & Kiến trúc dữ liệu",
+        title: "Quy chuẩn SRS & 10 Bất biến Nghiệp vụ",
         content:
-          "Xây dựng SRS và 10 quy tắc nghiệp vụ bất biến cho 4 luồng vận hành cốt lõi (Inbound, Outbound, Put-away, Picking) qua 12+ sơ đồ Use Case & Sequence; thiết kế Data Dictionary cho 18 bảng chuẩn 3NF triệt tiêu sai lệch logic giữa Vận hành và Dev.",
+          "Khảo sát bài toán thất thoát 25–40% thể tích kho; chuẩn hóa 10 quy tắc nghiệp vụ bất biến cho 4 luồng vận hành cốt lõi (Inbound, Put-away, Picking, Outbound) qua 12+ sơ đồ Use Case & Sequence.",
       },
       {
-        title: "Mô hình hóa không gian kho",
+        title: "Data Dictionary 3NF & Khóa Bi quan",
         content:
-          "Quy chuẩn hóa logic gợi ý vị trí kho theo thể tích 3D kết hợp phân loại ABC và định tuyến nhặt hàng S-Shape, hỗ trợ đội ngũ dev kiểm chứng thực tế tối ưu 22.8% dung tích và giảm 58.5% quãng đường nhặt hàng.",
+          "Thiết kế Data Dictionary 18 bảng chuẩn 3NF, xác lập công thức Tồn khả dụng thời gian thực và đặc tả giải pháp Row-level Pessimistic Locking trên MySQL InnoDB triệt tiêu Race Condition.",
       },
       {
-        title: "Kiểm soát đồng thời & Nghiệm thu NFRs",
+        title: "Mô hình hóa Không gian & Nghiệm thu Tải",
         content:
-          "Đặc tả cơ chế khóa bi quan cấp dòng xử lý Race Condition, loại bỏ rủi ro xuất âm kho và cùng đội ngũ nghiệm thu hệ thống đạt 412 TPS với độ trễ P95 < 380ms dưới tải 500 VUs.",
+          "Quy chuẩn hóa logic gợi ý vị trí theo thể tích 3D kết hợp ma trận ABC và định tuyến S-Shape (giảm 58.5% quãng đường); nghiệm thu hệ thống đạt 412 TPS, P95 < 380ms dưới tải 500 VUs.",
       },
     ],
   },
   {
     period: "01/2026 – 04/2026",
-    project: "Nền tảng Quản lý Thực tập sinh Tập trung (InternHub)",
-    affiliation: "Enterprise Web Platform",
+    project: "InternHub (Quản trị Thực tập sinh Doanh nghiệp)",
+    affiliation: "Dự án Kỹ thuật Phần mềm – Đại học CMC",
     role: "Technical Business Analyst (Workflows & Architecture)",
-    team: "Nhóm 5 thành viên · 5 Sprints",
+    team: "Nhóm 5 kỹ sư · 5 Sprints Agile",
     highlights: [
       {
-        title: "Chuẩn hóa Backlog & API Contracts",
+        title: "Phân rã Backlog & 38 API Contracts",
         content:
-          "Phân rã 33 INVEST User Stories, quản trị Sprint Backlog, chuẩn hóa 38 API Contracts (OpenAPI) kèm Error Catalog, bàn giao 100% phạm vi MVP đúng hạn qua 5 Sprints.",
+          "Phân rã 33 INVEST User Stories, quản trị Sprint Backlog, chuẩn hóa 38 RESTful API Contracts trên OpenAPI 3.0 kèm Error Catalog, bàn giao 100% phạm vi MVP đúng hạn qua 5 Sprints.",
       },
       {
-        title: "Bảo vệ toàn vẹn dữ liệu & Chống Deadlock",
+        title: "Toàn vẹn Dữ liệu Đánh giá & FSM",
         content:
-          "Xây dựng Data Dictionary cho 26 bảng; ứng dụng Finite State Machine (FSM), Immutable JSONB Snapshots và Append-Only Audit Trail bảo toàn toàn vẹn dữ liệu đánh giá lịch sử.",
+          "Xây dựng Data Dictionary 26 bảng chuẩn 3NF, thiết lập máy trạng thái FSM 8 phân hệ và cấu trúc Immutable JSONB Snapshots đóng băng tiêu chí Rubric đánh giá tại thời điểm chấm.",
       },
       {
-        title: "Tối ưu hóa quy trình & Xử lý bất đồng bộ",
+        title: "Xử lý Nền BullMQ & Chống Deadlock",
         content:
-          "Đặc tả kiến trúc hàng đợi BullMQ xử lý streaming file > 1.000 dòng trong 30 giây, nghiệm thu tiêu chuẩn NFRs độ trễ P95 < 300ms và thu hồi phiên < 500ms, cắt giảm > 70% thao tác thủ công.",
+          "Đặc tả kiến trúc hàng đợi BullMQ/Redis import streaming file > 1.000 dòng trong 30 giây, quy định cơ chế khóa tuần tự ORDER BY mentor_id ASC triệt tiêu Deadlock khi gán Mentor hàng loạt.",
+      },
+    ],
+  },
+  {
+    period: "2022 – 2026",
+    project: "Cử nhân Kỹ thuật Phần mềm",
+    affiliation: "Trường Đại học CMC (CMC University)",
+    role: "Sinh viên Kỹ thuật Phần mềm định hướng Hệ thống",
+    team: "Chương trình Đào tạo Kỹ sư chuẩn Quốc tế",
+    highlights: [
+      {
+        title: "Phân tích & Thiết kế Hệ thống",
+        content:
+          "Nắm vững phương pháp luận OOAD, UML 2.0 (Use Case, Sequence, Activity), BPMN 2.0 và quy chuẩn hóa yêu cầu nghiệp vụ qua hệ thống tài liệu kỹ thuật BRD/SRS chuyên sâu.",
+      },
+      {
+        title: "Kiến trúc CSDL Quan hệ & ACID",
+        content:
+          "Đào tạo chuyên sâu thiết kế CSDL quan hệ chuẩn 3NF, kỹ thuật lập chỉ mục tối ưu truy vấn, kiểm soát giao dịch đồng thời (ACID, Row-level Locking) và bảo vệ toàn vẹn dữ liệu.",
+      },
+      {
+        title: "Thực hành Quy trình Kỹ thuật",
+        content:
+          "Thực hành chuẩn Agile/Scrum qua các dự án phần mềm thực tế, thành thạo công cụ Jira, Confluence, Git, Postman, Swagger/OpenAPI, Draw.io và Docker.",
       },
     ],
   },
@@ -460,9 +454,9 @@ export default function Portfolio() {
         <section className="py-16 sm:py-24 border-b border-slate-200/70 bg-white">
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             {/* Status chip */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-700 mb-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 mb-6 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Sẵn sàng cho vị trí Technical BA / Systems Analyst</span>
+              <span>Sẵn sàng tiếp nhận vị trí Technical BA / Systems Analyst tại Hà Nội &amp; Remote</span>
             </div>
 
             {/* Main Headline */}
@@ -611,7 +605,7 @@ export default function Portfolio() {
                   <div className="mb-6">
                     <div className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-1.5">
                       <Workflow className="w-4 h-4 text-blue-600" />
-                      <span>Thách thức Vận hành &amp; Phân tích Kỹ thuật</span>
+                      <span>Trọng tâm Phân tích &amp; Đặc tả Kỹ thuật</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
@@ -638,26 +632,19 @@ export default function Portfolio() {
                   <div className="mb-6">
                     <div className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-1.5">
                       <TrendingUp className="w-4 h-4 text-emerald-600" />
-                      <span>Kết quả &amp; Tác động đo lường</span>
+                      <span>Chỉ số Kiểm chứng Thực tế</span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {project.metrics.map((m, mIdx) => (
                         <div
                           key={mIdx}
-                          className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-100"
+                          className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200/70"
                         >
-                          <div className="text-xl font-bold text-slate-900">{m.value}</div>
+                          <div className="text-xl font-bold text-slate-900 tracking-tight">{m.value}</div>
                           <div className="text-xs font-semibold text-slate-700 mt-0.5">{m.label}</div>
                           <div className="text-[11px] text-slate-500 mt-0.5">{m.sub}</div>
                         </div>
-                      ))}
-                    </div>
-
-                    {/* Results Narrative */}
-                    <div className="p-4 rounded-xl bg-slate-50/60 border border-slate-200/70 space-y-2.5">
-                      {project.results.map((r, rIdx) => (
-                        <div key={rIdx}>{r}</div>
                       ))}
                     </div>
                   </div>
@@ -697,6 +684,10 @@ export default function Portfolio() {
 
                   {/* Action Links */}
                   <div className="pt-4 mt-4 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
+                    <span className="text-xs font-semibold text-slate-700 mr-1 flex items-center gap-1">
+                      <ExternalLink className="w-3.5 h-3.5 text-blue-600" />
+                      Tài liệu minh chứng:
+                    </span>
                     {project.links.map((link, lIdx) => (
                       <a
                         key={lIdx}
@@ -783,13 +774,13 @@ export default function Portfolio() {
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             <div className="mb-12">
               <div className="text-xs font-semibold uppercase tracking-wider text-blue-600 mb-2">
-                Hành trình Chuyển giao
+                Hành trình Kỹ thuật &amp; Học vấn
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-3">
-                Kinh nghiệm Thực chiến &amp; Cột mốc
+                Kinh nghiệm Thực chiến &amp; Quá trình Đào tạo
               </h2>
               <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
-                Đúc kết từ quá trình khảo sát nghiệp vụ thực tế, mô hình hóa giải thuật, kiểm soát giao dịch đồng thời đến nghiệm thu chất lượng hệ thống.
+                Quá trình tích lũy năng lực phân tích nghiệp vụ, mô hình hóa hệ thống và nền tảng kỹ thuật phần mềm chính quy.
               </p>
             </div>
 
@@ -797,7 +788,7 @@ export default function Portfolio() {
               {MILESTONES.map((m, mIdx) => (
                 <div
                   key={mIdx}
-                  className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs"
+                  className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs hover:border-slate-300 transition-all"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-slate-100">
                     <div>
@@ -805,7 +796,7 @@ export default function Portfolio() {
                         <Calendar className="w-3.5 h-3.5" />
                         <span>{m.period}</span>
                         <span className="text-slate-300">•</span>
-                        <span className="text-slate-500">{m.affiliation}</span>
+                        <span className="text-slate-500 font-medium">{m.affiliation}</span>
                       </div>
                       <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
                         {m.project}
@@ -855,13 +846,13 @@ export default function Portfolio() {
             <div className="text-center max-w-2xl mx-auto mb-12">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium mb-4">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-                <span>Kết nối trực tiếp</span>
+                <span>Thông tin Liên hệ</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-3">
-                Sẵn sàng đồng hành cùng doanh nghiệp của bạn
+                Sẵn sàng tiếp nhận cơ hội hợp tác mới
               </h2>
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                Nếu đội ngũ của bạn đang tìm kiếm một Technical BA sở hữu tư duy hệ thống vững vàng, thấu hiểu quy trình vận hành và có khả năng trao đổi trực tiếp cùng các kỹ sư phát triển — hãy liên hệ với mình ngay hôm nay.
+                Tôi đang tìm kiếm cơ hội làm việc ở vị trí <strong>Technical Business Analyst / Systems Analyst</strong> (Toàn thời gian hoặc Hybrid tại Hà Nội). Rất mong có cơ hội trao đổi trực tiếp cùng quý công ty.
               </p>
             </div>
 
@@ -975,10 +966,10 @@ export default function Portfolio() {
             <div className="p-6 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 mb-12">
               <div>
                 <h3 className="text-base sm:text-lg font-bold">
-                  Hồ sơ Năng lực Technical Business Analyst
+                  Hồ sơ Năng lực (Technical BA Resume)
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-300">
-                  Tải bản Resume đầy đủ cập nhật các dự án, kỹ năng phân tích và công nghệ.
+                  Bản PDF chuẩn ATS tổng hợp chi tiết dự án thực chiến, quy chuẩn đặc tả dữ liệu và chỉ số kiểm chứng.
                 </p>
               </div>
 
@@ -987,7 +978,7 @@ export default function Portfolio() {
                   href="/docs/Nguyen-Tuan-Anh-Technical-BA.pdf"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm transition-all shadow-xs"
                 >
                   <Download className="w-4 h-4" />
                   <span>Tải Resume (PDF)</span>
@@ -1009,11 +1000,11 @@ export default function Portfolio() {
             <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Thiết kế với định hướng kỹ thuật chuẩn mực và bảo đảm tính toàn vẹn dữ liệu.</span>
+                <span>Nguyễn Tuấn Anh · Kỹ sư Phần mềm định hướng Technical Business Analyst</span>
               </div>
 
               <div>
-                © 2026 Nguyễn Tuấn Anh · Technical BA Portfolio
+                © 2026 All Rights Reserved
               </div>
             </div>
           </div>

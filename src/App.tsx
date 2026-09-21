@@ -13,7 +13,6 @@ import {
   Database,
   Boxes,
   Server,
-  Layout,
   Calendar,
   Users,
   Briefcase,
@@ -21,9 +20,8 @@ import {
   Copy,
   Check,
   MapPin,
+  Sparkles,
 } from "lucide-react";
-
-
 
 function LinkedinIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -39,6 +37,11 @@ function LinkedinIcon({ className = "w-5 h-5" }: { className?: string }) {
 }
 
 // --- TYPES ---
+interface AnalysisActionItem {
+  title: string;
+  detail: ReactNode;
+}
+
 interface ProjectImpactMetric {
   value: string;
   label: string;
@@ -59,8 +62,7 @@ interface FeaturedProject {
   domain: string;
   role: string;
   context: string;
-  problem: string;
-  solution: string;
+  analysisActions: AnalysisActionItem[];
   impactMetrics: ProjectImpactMetric[];
   googleXyzParagraphs: ReactNode[];
   deliverables: string[];
@@ -73,105 +75,127 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
   {
     id: "smart-wms",
     badgeNumber: "PROJECT 01",
-    title: "SMART WMS (SMART WAREHOUSE MANAGEMENT SYSTEM)",
-    domain: "Logistics & Supply Chain Automation",
-    role: "Technical Business Analyst & System Modeler",
+    title: "HỆ THỐNG QUẢN LÝ KHO HÀNG THÔNG MINH (SMART WMS)",
+    domain: "LOGISTICS & SUPPLY CHAIN AUTOMATION",
+    role: "Technical Business Analyst (Core System Modeler)",
     context:
-      "Nền tảng quản trị kho hàng thông minh đa chi nhánh, giải quyết bài toán lãng phí không gian lưu trữ và sai lệch tồn kho vật lý tại các doanh nghiệp phân phối vừa và nhỏ (SMEs).",
-    problem:
-      "Các kho truyền thống lãng phí 25–40% thể tích ô chứa, nhặt hàng mất 15–30 phút/đơn và đối mặt nguy cơ xuất âm kho do tranh chấp dữ liệu đồng thời.",
-    solution:
-      "Đặc tả mô hình dữ liệu quan hệ 18 thực thể chuẩn 3NF và kiến trúc Transactional Outbox Pattern qua BullMQ/Redis. Thiết kế thuật toán AI Slotting Heuristic (4 trọng số thích nghi) kết hợp định tuyến nhặt hàng S-Shape Routing và cơ chế khóa bi quan (SELECT ... FOR UPDATE) ở mức cô lập READ COMMITTED.",
+      "Nền tảng quản trị kho hàng đa chi nhánh nhằm giải quyết tình trạng lãng phí thể tích lưu trữ (25–40%), thời gian gom hàng kéo dài (15–30 phút/đơn) và nguy cơ xuất âm kho do tranh chấp dữ liệu khi nhiều nhân viên cùng nhặt một mã hàng (SKU).",
+    analysisActions: [
+      {
+        title: "Quy chuẩn hóa nghiệp vụ",
+        detail: (
+          <span>
+            Xây dựng tài liệu <strong className="text-slate-900 font-semibold">SRS</strong> và chuẩn hóa{" "}
+            <strong className="text-slate-900 font-semibold">10 quy tắc nghiệp vụ bất biến</strong> cho 4 luồng vận hành cốt lõi:{" "}
+            <span className="text-blue-700 font-medium">Inbound, Put-away, Picking, Outbound</span> qua 12+ sơ đồ Use Case và Sequence Diagrams.
+          </span>
+        ),
+      },
+      {
+        title: "Mô hình hóa không gian",
+        detail: (
+          <span>
+            Chuyển hóa bài toán xếp dỡ thành tập ràng buộc kỹ thuật (tải trọng kệ, thể tích 3 chiều, tần suất quay vòng SKU theo{" "}
+            <strong className="text-slate-900 font-semibold">ma trận ABC</strong>) và đặc tả logic định tuyến{" "}
+            <strong className="text-slate-900 font-semibold">S-Shape</strong> cho đội ngũ backend.
+          </span>
+        ),
+      },
+      {
+        title: "Toàn vẹn dữ liệu",
+        detail: (
+          <span>
+            Thiết kế Data Dictionary cho 18 bảng chuẩn <strong className="text-slate-900 font-semibold">3NF</strong>, xác lập công thức Tồn khả dụng bất biến (
+            <code className="bg-slate-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs font-semibold border border-slate-200">
+              Available = OnHand - Reserved - Frozen
+            </code>
+            ) và đặc tả cơ chế khóa bi quan cấp dòng (
+            <code className="bg-slate-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs font-semibold border border-slate-200">
+              SELECT ... FOR UPDATE
+            </code>
+            ) nhằm ngăn chặn triệt để Race Condition.
+          </span>
+        ),
+      },
+    ],
     impactMetrics: [
       {
-        value: "100%",
-        label: "Zero Race Condition",
-        detail: "Triệt tiêu hoàn toàn rủi ro xuất âm kho & tranh chấp giữ chỗ qua 1.000 test case đồng thời",
+        value: "0%",
+        label: "Bất Nhất Dữ Liệu",
+        detail: "Tỷ lệ bất nhất bằng 0 qua 1.000 test case đồng thời (500 Virtual Users)",
         color: "emerald",
       },
       {
         value: "412 TPS",
-        label: "Thông Lượng P95 380ms",
-        detail: "Đạt chuẩn tải 500 VUs qua kiểm soát khóa bi quan cấp dòng trên MySQL InnoDB",
+        label: "Thông Lượng P95 < 380ms",
+        detail: "Khóa bi quan cấp dòng (Pessimistic Locking) trên MySQL InnoDB",
         color: "blue",
       },
       {
         value: "-58.5%",
-        label: "Quãng Đường Di Chuyển",
-        detail: "Giảm từ 1.842m xuống 765m/đợt; tăng 22.8% dung tích khai thác (lấp đầy 58.4% → 81.2%)",
+        label: "Quãng Đường Nhặt Hàng",
+        detail: "Giảm từ 1.842m xuống 765m/đợt; tăng tỷ lệ lấp đầy từ 58.4% lên 81.2%",
         color: "indigo",
       },
     ],
     googleXyzParagraphs: [
       (
         <p key="p1" className="text-slate-300 leading-relaxed">
-          Triệt tiêu{" "}
-          <strong className="text-white font-semibold">
-            100% rủi ro xuất âm kho và tranh chấp giữ chỗ (Race Condition) qua 1.000 test case đồng thời
-          </strong>{" "}
+          <strong className="text-white font-semibold">Toàn vẹn tồn kho</strong>{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px] font-bold border border-blue-500/30">
             [X]
           </span>
-          , được đo lường bằng{" "}
-          <span className="text-emerald-300 font-medium">
-            thông lượng 412 TPS và độ trễ P95 đạt 380 ms dưới tải 500 VUs
-          </span>{" "}
+          : Loại bỏ hoàn toàn rủi ro xuất âm kho và sai lệch tồn khả dụng trên môi trường thực nghiệm, đo lường bằng{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/30">
             [Y]
           </span>
-          , thông qua việc đặc tả công thức tồn kho khả dụng thời gian thực (
-          <code className="bg-slate-800/90 text-blue-200 px-1.5 py-0.5 rounded font-mono text-xs border border-slate-700/80">
-            Available = Physical - Reserved - Frozen
-          </code>
-          ) kết hợp kiểm soát khóa bi quan cấp dòng trên{" "}
-          <span className="text-slate-200 font-medium">MySQL InnoDB</span>{" "}
+          :{" "}
+          <span className="text-emerald-300 font-medium">
+            Tỷ lệ bất nhất dữ liệu bằng 0 qua 1.000 kịch bản kiểm thử tải đồng thời (500 Virtual Users) đạt thông lượng 412 TPS (P95 &lt; 380ms)
+          </span>
+          , thông qua việc{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-[10px] font-bold border border-indigo-500/30">
             [Z]
           </span>
-          .
+          : Đặc tả công thức tồn khả dụng thời gian thực kết hợp cơ chế Row-level Pessimistic Locking trên{" "}
+          <span className="text-slate-200 font-medium">MySQL InnoDB</span>.
         </p>
       ),
       (
         <p key="p2" className="text-slate-300 leading-relaxed">
-          Đồng thời,{" "}
-          <strong className="text-white font-semibold">
-            cắt giảm 58.5% quãng đường di chuyển lấy hàng
-          </strong>{" "}
-          (từ 1.842m xuống 765m/đợt) và{" "}
-          <strong className="text-white font-semibold">
-            nâng tỷ lệ lấp đầy thể tích từ 58.4% lên 81.2%
-          </strong>{" "}
-          (tăng 22.8% dung tích khai thác){" "}
+          <strong className="text-white font-semibold">Hiệu suất nhặt hàng</strong>{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px] font-bold border border-blue-500/30">
             [X]
-          </span>{" "}
-          bằng cách mô hình hóa hàm thích nghi đa mục tiêu{" "}
-          <code className="bg-slate-800/90 text-blue-200 px-1.5 py-0.5 rounded font-mono text-xs border border-slate-700/80">
-            F(pᵢ, bⱼ)
-          </code>{" "}
-          và giải thuật định tuyến{" "}
-          <span className="text-slate-200 font-medium">S-Shape</span> cho 1.000 ô bin chuẩn{" "}
+          </span>
+          : Cắt giảm 58.5% quãng đường di chuyển (từ 1.842m xuống 765m/đợt) và nâng tỷ lệ lấp đầy thể tích từ 58.4% lên 81.2% (tăng 22.8% dung tích khai thác), đo lường bằng{" "}
+          <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/30">
+            [Y]
+          </span>
+          :{" "}
+          <span className="text-emerald-300 font-medium">
+            Mô hình mô phỏng 1.000 vị trí ô chứa (Bins) tiêu chuẩn
+          </span>
+          , thông qua việc{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-[10px] font-bold border border-indigo-500/30">
             [Z]
           </span>
-          .
+          : Đặc tả logic gợi ý vị trí kho theo ma trận ABC và thuật toán định tuyến nhặt hàng{" "}
+          <span className="text-slate-200 font-medium">S-Shape</span>.
         </p>
       ),
     ],
     deliverables: [
-      "BRD (Business Requirement Document)",
-      "ERD 18 Entities (3NF)",
-      "Sequence & Activity Diagrams",
-      "Data Dictionary",
-      "OpenAPI Spec 3.0",
+      "BRD/SRS Document",
+      "Data Dictionary 18 Entities (chuẩn 3NF)",
+      "Use Case & Sequence Diagrams",
+      "NFRs Verification Report",
     ],
     techStack: [
       "MySQL 8.0 (InnoDB)",
       "TypeORM",
-      "Redis 7 (Distributed Lock)",
+      "Redis",
       "NestJS",
       "ReactJS",
-      "BullMQ",
       "Docker",
     ],
     actionLinks: [
@@ -193,15 +217,43 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
   {
     id: "internhub",
     badgeNumber: "PROJECT 02",
-    title: "INTERNHUB – ENTERPRISE TALENT LIFECYCLE & PERFORMANCE PLATFORM",
-    domain: "Enterprise HR Tech & Education Integration",
-    role: "Lead Technical BA & Solution Architect",
+    title: "NỀN TẢNG QUẢN LÝ THỰC TẬP SINH TẬP TRUNG (INTERNHUB)",
+    domain: "ENTERPRISE TALENT & PERFORMANCE PLATFORM",
+    role: "Technical Business Analyst (Workflows & Architecture)",
     context:
-      "Nền tảng điều phối vận hành và đánh giá năng lực thực tập sinh khép kín, số hóa toàn bộ chuỗi giá trị từ Onboarding, giao việc Kanban đến thẩm định Rubric đa chiều.",
-    problem:
-      "Quy trình vận hành thủ công gây chậm trễ bàn giao/thu hồi quyền truy cập, tốn 70% thời gian xử lý sự vụ và tồn tại thiên vị trong đánh giá năng lực cá nhân.",
-    solution:
-      "Đặc tả kiến trúc Modular Monolith phân tách 8 Bounded Contexts, quản lý vòng đời bằng Finite State Machine (FSM) khép kín. Thiết kế cơ chế chống Deadlock khi Bulk Assign (ORDER BY id ASC), mô hình kiểm soát truy cập PBAC/ABAC chặn triệt để lỗ hổng IDOR, và cấu trúc Immutable JSONB Snapshot cho biểu mẫu Rubric.",
+      "Số hóa toàn diện vòng đời thực tập sinh, thay thế quy trình phân mảnh qua Excel/Zalo; loại bỏ chậm trễ trong cấp/thu hồi quyền truy cập, giảm tải tác vụ hành chính và chuẩn hóa thang đo thẩm định Rubric đa chiều.",
+    analysisActions: [
+      {
+        title: "Chuẩn hóa luồng & API",
+        detail: (
+          <span>
+            Phân rã <strong className="text-slate-900 font-semibold">33 INVEST User Stories</strong>, quản trị Sprint Backlog, chuẩn hóa{" "}
+            <strong className="text-slate-900 font-semibold">38 RESTful API Contracts</strong> (OpenAPI kèm Error Catalog chi tiết) giúp đội ngũ kỹ thuật bàn giao 100% phạm vi MVP qua 5 Sprints.
+          </span>
+        ),
+      },
+      {
+        title: "Bảo vệ toàn vẹn dữ liệu",
+        detail: (
+          <span>
+            Thiết kế Data Dictionary cho 26 bảng, đặc tả cấu trúc{" "}
+            <strong className="text-slate-900 font-semibold">JSONB Snapshots</strong> đóng băng tiêu chí chấm Rubric tại thời điểm đánh giá và cơ chế Append-Only Audit Trail nhằm bảo toàn dữ liệu lịch sử.
+          </span>
+        ),
+      },
+      {
+        title: "Xử lý nền & Chống Deadlock",
+        detail: (
+          <span>
+            Đặc tả kiến trúc hàng đợi <strong className="text-slate-900 font-semibold">BullMQ/Redis</strong> để import streaming file dữ liệu &gt; 1.000 dòng trong 30 giây, quy định cơ chế khóa tuần tự (
+            <code className="bg-slate-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs font-semibold border border-slate-200">
+              ORDER BY mentor_id ASC
+            </code>
+            ) chống Deadlock khi gán Mentor hàng loạt.
+          </span>
+        ),
+      },
+    ],
     impactMetrics: [
       {
         value: "> 70%",
@@ -212,86 +264,77 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
       {
         value: "< 500ms",
         label: "Thu Hồi Quyền Truy Cập",
-        detail: "Session Revocation < 500ms; độ trễ phản hồi API Dashboard P95 < 300ms",
+        detail: "Session Revocation < 500ms; độ trễ API Dashboard nghiệm thu P95 < 300ms",
         color: "blue",
       },
       {
-        value: "< 5%",
-        label: "Đánh Giá Cảm Tính",
-        detail: "Blind Review song song & cảnh báo điểm bất thường (|S_self - S_mentor| > 3.0)",
+        value: "100%",
+        label: "Kiểm Toán Phiếu Chấm",
+        detail: "Phiếu chấm được kiểm toán toàn vẹn, cảnh báo biên độ lệch |S_self - S_mentor| > 3.0",
         color: "indigo",
       },
     ],
     googleXyzParagraphs: [
       (
         <p key="p1" className="text-slate-300 leading-relaxed">
-          <strong className="text-white font-semibold">
-            Cắt giảm &gt; 70% thời gian xử lý tác vụ thủ công
-          </strong>{" "}
-          trong toàn bộ vòng đời thực tập sinh{" "}
+          <strong className="text-white font-semibold">Hiệu quả vận hành</strong>{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px] font-bold border border-blue-500/30">
             [X]
           </span>
-          , được đo lường bằng{" "}
-          <span className="text-emerald-300 font-medium">
-            thời gian thu hồi quyền truy cập (Session Revocation) &lt; 500 ms
-          </span>{" "}
-          và{" "}
-          <span className="text-emerald-300 font-medium">
-            độ trễ phản hồi API Dashboard P95 &lt; 300 ms
-          </span>{" "}
+          : Cắt giảm &gt; 70% thời gian xử lý thủ công trong toàn bộ vòng đời thực tập sinh, đo lường bằng{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/30">
             [Y]
           </span>
-          , thông qua việc thiết lập máy trạng thái hữu hạn{" "}
-          <span className="text-slate-200 font-medium">
-            FSM (Draft → Active → Evaluating → Completed → Archived)
-          </span>{" "}
-          kết hợp cơ chế Blacklist phân tán trên{" "}
-          <span className="text-slate-200 font-medium">Redis Cluster</span>{" "}
+          :{" "}
+          <span className="text-emerald-300 font-medium">
+            Tốc độ thu hồi phiên truy cập (Session Revocation) &lt; 500ms và độ trễ API Dashboard nghiệm thu đạt P95 &lt; 300ms
+          </span>
+          , thông qua việc{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-[10px] font-bold border border-indigo-500/30">
             [Z]
           </span>
-          .
+          : Thiết lập máy trạng thái (<span className="text-slate-200 font-medium">FSM</span>) 8 phân hệ kết hợp cơ chế Blacklist phân tán trên{" "}
+          <span className="text-slate-200 font-medium">Redis</span> và hàng đợi xử lý bất đồng bộ{" "}
+          <span className="text-slate-200 font-medium">BullMQ</span>.
         </p>
       ),
       (
         <p key="p2" className="text-slate-300 leading-relaxed">
-          Đồng thời,{" "}
-          <strong className="text-white font-semibold">
-            hạ tỷ lệ đánh giá cảm tính xuống &lt; 5%
-          </strong>{" "}
+          <strong className="text-white font-semibold">Tính khách quan dữ liệu</strong>{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px] font-bold border border-blue-500/30">
             [X]
-          </span>{" "}
-          bằng cách thiết kế cơ chế{" "}
-          <span className="text-slate-200 font-medium">Blind Review song song</span>, thuật toán
-          cảnh báo bất thường điểm số (
-          <code className="bg-slate-800/90 text-blue-200 px-1.5 py-0.5 rounded font-mono text-xs border border-slate-700/80">
-            |S_self - S_mentor| &gt; 3.0
-          </code>
-          ) và đóng băng cấu trúc đánh giá bằng{" "}
-          <span className="text-slate-200 font-medium">Immutable JSONB Snapshot</span>{" "}
+          </span>
+          : Loại bỏ hoàn toàn rủi ro sai lệch dữ liệu đánh giá và kiểm soát độ lệch điểm số cảm tính, đo lường bằng{" "}
+          <span className="inline-block px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/30">
+            [Y]
+          </span>
+          :{" "}
+          <span className="text-emerald-300 font-medium">
+            100% phiếu chấm được kiểm toán toàn vẹn kèm cờ cảnh báo biên độ lệch |S_self - S_mentor| &gt; 3.0
+          </span>
+          , thông qua việc{" "}
           <span className="inline-block px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-[10px] font-bold border border-indigo-500/30">
             [Z]
           </span>
-          .
+          : Đặc tả cơ chế{" "}
+          <span className="text-slate-200 font-medium">Blind Review song song</span> và đóng băng biểu mẫu đánh giá bằng cấu trúc{" "}
+          <span className="text-slate-200 font-medium">Immutable JSONB Snapshots</span>.
         </p>
       ),
     ],
     deliverables: [
-      "Business Requirement Document (BRD)",
-      "User Stories & Epics Matrix",
-      "API Contracts Master (Error Catalog)",
-      "Edge Case & Impact Analysis Matrix",
+      "BRD/SRS",
+      "User Stories & INVEST Backlog",
+      "API Contracts Master (OpenAPI)",
+      "Edge Cases & Concurrency Risk Matrix",
     ],
     techStack: [
-      "PostgreSQL 16 (JSONB & GIN Index)",
-      "Redis 7",
+      "PostgreSQL 16 (JSONB & GIN)",
+      "Redis",
       "BullMQ",
-      "Node.js/NestJS",
-      "Docker Compose",
-      "AWS S3",
+      "NestJS",
+      "ReactJS",
+      "Docker",
     ],
     actionLinks: [
       {
@@ -311,7 +354,7 @@ const FEATURED_PROJECTS: FeaturedProject[] = [
   },
 ];
 
-// --- SKILL PILLARS DATA ---
+// --- SKILL PILLARS DATA (Technical BA Competencies) ---
 interface SkillSubCategory {
   title: string;
   items: string[];
@@ -323,182 +366,151 @@ interface SkillPillar {
   title: string;
   tier: string;
   color: "blue" | "emerald" | "purple" | "amber";
-  iconName: "server" | "database" | "layout" | "shield";
+  iconName: "workflow" | "database" | "server" | "users";
   subCategories: SkillSubCategory[];
 }
 
 const SKILL_PILLARS: SkillPillar[] = [
   {
-    id: "backend-integration",
+    id: "business-process-modeling",
     number: "01",
-    title: "Backend, APIs & System Integration",
-    tier: "TẦNG NGHIỆP VỤ & GIAO DỊCH",
+    title: "Phân tích Nghiệp vụ & Mô hình hóa Quy trình (Business & Process Modeling)",
+    tier: "TẦNG NGHIỆP VỤ & QUY TRÌNH",
     color: "blue",
-    iconName: "server",
+    iconName: "workflow",
     subCategories: [
       {
-        title: "Core Frameworks & Architecture",
+        title: "Tài liệu hóa yêu cầu",
         items: [
-          "NestJS (TypeScript)",
-          "Modular Monolith",
-          "Clean Architecture / DDD",
-          "Transactional Outbox Pattern",
+          "SRS",
+          "BRD",
+          "INVEST User Stories",
+          "Acceptance Criteria (Given-When-Then)",
+          "Gherkin",
         ],
       },
       {
-        title: "API Standards & Protocols",
+        title: "Sơ đồ hóa trực quan",
         items: [
-          "RESTful API Design (OpenAPI/Swagger)",
-          "WebSocket (Real-time events)",
-          "Scoped APIs",
-          "Idempotency Pattern",
+          "UML 2.0 (Use Case)",
+          "Sequence Diagrams",
+          "Activity Diagrams",
+          "BPMN 2.0",
         ],
       },
       {
-        title: "State & Concurrency Control",
+        title: "Mô hình hóa logic",
         items: [
           "Finite State Machine (FSM)",
-          "Distributed Queue (BullMQ/Redis)",
-          "Deadlock Prevention (ORDER BY id ASC)",
-          "Exponential Backoff & Dead-Letter Queue (DLQ)",
-        ],
-      },
-      {
-        title: "Algorithms & Logic Modeling",
-        items: [
-          "Heuristic Multi-objective Optimization (AI Slotting Engine)",
-          "S-Shape Picking Routing",
-          "NLP Intent/Entity Parsing (Levenshtein Distance)",
+          "Business Invariants Formulation",
+          "Ma trận phân loại hàng hóa ABC",
+          "Định tuyến kho S-Shape",
         ],
       },
     ],
   },
   {
-    id: "database-governance",
+    id: "data-architecture-concurrency",
     number: "02",
-    title: "Database, Persistence & Data Governance",
+    title: "Dữ liệu & Xử lý Giao dịch (Data Architecture & Concurrency)",
     tier: "TẦNG DỮ LIỆU & TÍNH TOÀN VẸN",
     color: "emerald",
     iconName: "database",
     subCategories: [
       {
-        title: "RDBMS & Data Modeling",
+        title: "Thiết kế cơ sở dữ liệu",
         items: [
-          "PostgreSQL 16",
-          "MySQL 8.0 (InnoDB)",
-          "Data Modeling chuẩn hóa 3NF (18+ Entities)",
-          "Database Migrations",
+          "Conceptual/Logical Data Modeling",
+          "Chuẩn hóa 3NF",
+          "Xây dựng Data Dictionary",
         ],
       },
       {
-        title: "Concurrency & Locking Mechanics",
+        title: "Toàn vẹn & Đồng thời",
         items: [
-          "Pessimistic Write Lock (SELECT ... FOR UPDATE)",
-          "Read-Replica Routing",
-          "ACID Transactions (READ COMMITTED)",
+          "Đặc tả khóa bi quan (Row-level Pessimistic Locking)",
+          "Chiến lược ngăn ngừa Deadlock (ORDER BY id ASC)",
+          "ACID Transactions",
         ],
       },
       {
-        title: "Advanced Storage & Formats",
+        title: "Kiểm toán & Lưu trữ nâng cao",
         items: [
-          "Immutable JSONB Snapshots (GIN Indexing)",
-          "Redis In-Memory Caching (Cache-Aside, TTL Strategy)",
-          "S3/MinIO Object Storage (Pre-signed URLs)",
-        ],
-      },
-      {
-        title: "Audit & Data Integrity",
-        items: [
-          "Append-Only Audit Logging (JSON Delta tracking)",
-          "Hard Database Check Constraints (CHECK >= 0)",
-          "Zero-Cascade Data Protection",
+          "Immutable JSONB Snapshots",
+          "Append-Only Audit Logging",
+          "Hard Database Constraints (CHECK >= 0)",
         ],
       },
     ],
   },
   {
-    id: "frontend-presentation",
+    id: "api-contracts-nfrs",
     number: "03",
-    title: "Frontend & Presentation Engineering",
-    tier: "TẦNG GIAO DIỆN & TƯƠNG TÁC",
+    title: "Tích hợp API & Đặc tả NFRs (API Contracts & Performance)",
+    tier: "TẦNG TÍCH HỢP & HIỆU NĂNG NFRs",
     color: "purple",
-    iconName: "layout",
+    iconName: "server",
     subCategories: [
       {
-        title: "Frameworks & Core Tools",
+        title: "Chuẩn hóa giao tiếp",
         items: [
-          "ReactJS 18+",
-          "Vite",
-          "TypeScript (Strict Mode)",
-          "TailwindCSS",
-          "Shadcn/ui",
+          "RESTful API Contracts (OpenAPI 3.0 / Swagger)",
+          "Error Catalog mã lỗi HTTP",
+          "Idempotency Pattern",
         ],
       },
       {
-        title: "State Management & Data Fetching",
+        title: "Xử lý nền",
         items: [
-          "TanStack Query (Server State, Caching, Polling)",
-          "Zustand",
-          "Virtual DOM Optimization",
+          "Message Queue (BullMQ/Redis) streaming bất đồng bộ",
+          "Cơ chế Retry & Exponential Backoff",
         ],
       },
       {
-        title: "Hardware & Edge Interaction",
+        title: "Kiểm soát NFRs",
         items: [
-          "Camera Barcode/QR Code Scanner (MediaDevices API)",
-          "Blind Stocktake UI Pattern",
-        ],
-      },
-      {
-        title: "Security & Session Resilience",
-        items: [
-          "Silent Token Refresh (Axios Interceptors)",
-          "Concurrent Request Queue",
-          "JWT Rotation Grace Period (30s)",
+          "Độ trễ P95 (< 300ms / 380ms)",
+          "Throughput (TPS)",
+          "Session Invalidation (< 500ms)",
         ],
       },
     ],
   },
   {
-    id: "security-infra-agile",
+    id: "agile-collaboration",
     number: "04",
-    title: "Security, Infrastructure & Engineering Process",
-    tier: "TẦNG BẢO MẬT & QUY TRÌNH",
+    title: "Quy trình Agile & Đàm phán Yêu cầu (Delivery & Collaboration)",
+    tier: "TẦNG QUY TRÌNH & CHUYỂN GIAO",
     color: "amber",
-    iconName: "shield",
+    iconName: "users",
     subCategories: [
       {
-        title: "Auth & Access Control",
+        title: "Quản trị quy trình",
         items: [
-          "OAuth2/SSO",
-          "JWT Rotation",
-          "Argon2id/BCrypt",
-          "RBAC kết hợp PBAC/ABAC (Object-Level Ownership / Anti-IDOR)",
+          "Agile/Scrum",
+          "Phân rã User Story",
+          "Quản trị Sprint Backlog",
+          "Kiểm soát Scope Creep (MVP)",
         ],
       },
       {
-        title: "Edge Security & Gateway",
+        title: "Công cụ hỗ trợ",
         items: [
-          "Nginx Reverse Proxy (SSL/TLS 1.3 Termination)",
-          "Token Bucket Rate Limiting",
-          "OWASP Top 10 Hardening (HSTS, CSP, X-Frame-Options: DENY)",
+          "Jira",
+          "Confluence",
+          "Postman",
+          "Draw.io",
+          "Git",
+          "Mock API",
         ],
       },
       {
-        title: "Containerization & Deployment",
+        title: "Cộng tác & Phân tích tác động",
         items: [
-          "Docker",
-          "Docker Compose (Multi-stage builds, DMZ/Private network isolation)",
-          "Resource Limits (Memory/CPU cgroups)",
-        ],
-      },
-      {
-        title: "Business Analysis & Agile Delivery",
-        items: [
-          "BRD/SRS Authoring",
-          "BPMN 2.0 / UML (Activity, Sequence, State Machine)",
-          "Jira/Confluence (Epics, User Stories, Acceptance Criteria)",
-          "Scrum/Agile Delivery",
+          "Cầu nối Ops-to-Dev",
+          "Đàm phán logic kỹ thuật với Lead Engineer",
+          "Phân tích trường hợp biên (Edge Cases)",
+          "Giảm thiểu rủi ro vận hành",
         ],
       },
     ],
@@ -527,59 +539,39 @@ const EXPERIENCE_MILESTONES: ExperienceMilestone[] = [
     id: "smart-wms-milestone",
     milestoneNumber: "CỘT MỐC 01",
     title: "DỰ ÁN HỆ THỐNG QUẢN LÝ KHO HÀNG THÔNG MINH (SMART WMS)",
-    timeline: "06/2026 – 09/2026 (Đồ án Tốt nghiệp xuất sắc – CMC University)",
+    timeline: "06/2026 – 09/2026 (Đồ án Kỹ thuật Phần mềm Xuất sắc – Đại học CMC)",
     role: "Technical Business Analyst (Core System Modeler)",
-    teamScale: "Nhóm 5 thành viên (Full-stack Team) | Quy trình Agile/Scrum",
+    teamScale: "Nhóm 5 thành viên (Full-stack Team) | Agile/Scrum",
     accentColor: "blue",
     contributions: [
       {
-        title: "Kiến trúc dữ liệu & Loại bỏ rủi ro đồng thời",
+        title: "Đặc tả luồng kho & Kiến trúc dữ liệu",
         description: (
           <span>
-            Thiết kế mô hình dữ liệu quan hệ 18 bảng chuẩn{" "}
-            <strong className="text-slate-900 font-semibold">3NF</strong>, đặc tả
-            công thức tồn kho khả dụng thời gian thực (
-            <code className="bg-slate-100 px-1 py-0.5 rounded text-blue-700 font-mono text-xs font-semibold">
-              Available = Physical - Reserved - Frozen
-            </code>
-            ) kết hợp cơ chế khóa bi quan (
-            <code className="bg-slate-100 px-1 py-0.5 rounded text-blue-700 font-mono text-xs font-semibold">
-              SELECT ... FOR UPDATE
-            </code>
-            ), giúp đội ngũ 5 kỹ sư triệt tiêu{" "}
-            <strong className="text-emerald-600 font-bold">100% rủi ro xuất âm kho</strong> và
-            lỗi Race Condition qua 1.000 kịch bản kiểm thử.
+            Xây dựng <strong className="text-slate-900 font-semibold">SRS</strong> và{" "}
+            <strong className="text-slate-900 font-semibold">10 quy tắc nghiệp vụ bất biến</strong> cho 4 luồng vận hành cốt lõi (Inbound, Outbound, Put-away, Picking) qua 12+ sơ đồ Use Case &amp; Sequence; thiết kế Data Dictionary cho 18 bảng chuẩn{" "}
+            <strong className="text-slate-900 font-semibold">3NF</strong> triệt tiêu sai lệch logic giữa Vận hành và Dev.
           </span>
         ),
       },
       {
-        title: "Mô hình hóa giải thuật không gian",
+        title: "Mô hình hóa bài toán không gian",
         description: (
           <span>
-            Chuyển hóa bài toán vận hành thành tài liệu đặc tả thuật toán{" "}
-            <strong className="text-slate-900 font-semibold">Heuristic 3D</strong> và định
-            tuyến <strong className="text-slate-900 font-semibold">S-Shape</strong> cho lập
-            trình viên, mang lại kết quả thực nghiệm{" "}
-            <strong className="text-emerald-600 font-bold">
-              tăng 22.8% dung tích kho khai thác
-            </strong>{" "}
-            và{" "}
-            <strong className="text-emerald-600 font-bold">
-              cắt giảm 58.5% quãng đường nhặt hàng
-            </strong>
-            .
+            Quy chuẩn hóa logic gợi ý vị trí kho theo thể tích 3D kết hợp phân loại ABC và định tuyến nhặt hàng{" "}
+            <strong className="text-slate-900 font-semibold">S-Shape</strong>, hỗ trợ đội ngũ dev kiểm chứng thực tế{" "}
+            <strong className="text-emerald-600 font-bold">tối ưu 22.8% dung tích</strong> và{" "}
+            <strong className="text-emerald-600 font-bold">giảm 58.5% quãng đường nhặt hàng</strong>.
           </span>
         ),
       },
       {
-        title: "Đặc tả NFR & Đo lường chịu tải",
+        title: "Kiểm soát đồng thời & Nghiệm thu NFRs",
         description: (
           <span>
-            Thiết lập bộ 8 chỉ số phi chức năng (NFRs) và trực tiếp nghiệm thu kịch bản kiểm thử tải
-            với <strong className="text-slate-900 font-semibold">k6</strong>, chứng minh hệ thống đạt
-            thông lượng <strong className="text-blue-700 font-bold">412 TPS</strong> với độ trễ P95
-            đạt <strong className="text-blue-700 font-bold">380 ms</strong> dưới tải 500 VUs đồng
-            thời.
+            Đặc tả cơ chế khóa bi quan cấp dòng xử lý Race Condition, loại bỏ rủi ro xuất âm kho và cùng đội ngũ nghiệm thu hệ thống đạt{" "}
+            <strong className="text-blue-700 font-bold">412 TPS</strong> với độ trễ{" "}
+            <strong className="text-blue-700 font-bold">P95 &lt; 380ms</strong> dưới tải 500 VUs.
           </span>
         ),
       },
@@ -588,53 +580,40 @@ const EXPERIENCE_MILESTONES: ExperienceMilestone[] = [
   {
     id: "internhub-milestone",
     milestoneNumber: "CỘT MỐC 02",
-    title: "DỰ ÁN NỀN TẢNG QUẢN LÝ THỰC TẬP SINH TẬP TRUNG (INTERNHUB)",
+    title: "NỀN TẢNG QUẢN LÝ THỰC TẬP SINH TẬP TRUNG (INTERNHUB)",
     timeline: "01/2026 – 04/2026 (Enterprise Web Platform)",
-    role: "Technical Business Analyst & Solution Architect",
+    role: "Technical Business Analyst (Workflows & Architecture)",
     teamScale: "Nhóm 5 thành viên | 5 Sprints (Agile/Scrum khép kín)",
     accentColor: "indigo",
     contributions: [
       {
-        title: "Chuẩn hóa yêu cầu kỹ thuật & API Contracts",
+        title: "Chuẩn hóa Backlog & API Contracts",
         description: (
           <span>
-            Phân rã <strong className="text-slate-900 font-semibold">33 INVEST User Stories</strong>,
-            đặc tả <strong className="text-slate-900 font-semibold">38 API Contracts</strong> chuẩn
-            hóa (kèm Error Catalog mã lỗi HTTP) và mô hình hóa 26 bảng dữ liệu, giúp đội ngũ bàn giao{" "}
-            <strong className="text-emerald-600 font-bold">100% phạm vi MVP đúng hạn</strong> qua 5
-            Sprints mà không phát sinh sai lệch logic.
+            Phân rã <strong className="text-slate-900 font-semibold">33 INVEST User Stories</strong>, quản trị Sprint Backlog, chuẩn hóa{" "}
+            <strong className="text-slate-900 font-semibold">38 API Contracts (OpenAPI)</strong> kèm Error Catalog, bàn giao{" "}
+            <strong className="text-emerald-600 font-bold">100% phạm vi MVP đúng hạn</strong> qua 5 Sprints.
           </span>
         ),
       },
       {
-        title: "Đặc tả cơ chế bảo vệ dữ liệu & Chống Deadlock",
+        title: "Đặc tả toàn vẹn dữ liệu & Chống Deadlock",
         description: (
           <span>
-            Thiết lập máy trạng thái (
-            <strong className="text-slate-900 font-semibold">FSM</strong>) cho 8 phân hệ, đặc tả
-            cơ chế khóa tuần tự hóa (
-            <code className="bg-slate-100 px-1 py-0.5 rounded text-indigo-700 font-mono text-xs font-semibold">
-              ORDER BY mentor_id ASC
-            </code>
-            ) chống Deadlock khi Bulk Assign, giải thuật cảnh báo lệch điểm (
-            <code className="bg-slate-100 px-1 py-0.5 rounded text-pink-700 font-mono text-xs font-semibold">
-              |S_self - S_mentor| &gt; 3.0
-            </code>
-            ) và bảo toàn dữ liệu đánh giá bằng{" "}
-            <strong className="text-slate-900 font-semibold">Immutable JSONB Snapshot</strong>.
+            Xây dựng Data Dictionary cho 26 bảng; ứng dụng Finite State Machine (
+            <strong className="text-slate-900 font-semibold">FSM</strong>),{" "}
+            <strong className="text-slate-900 font-semibold">Immutable JSONB Snapshots</strong> và Append-Only Audit Trail bảo toàn toàn vẹn dữ liệu đánh giá lịch sử.
           </span>
         ),
       },
       {
-        title: "Tối ưu hóa quy trình & Hiệu năng xử lý nền",
+        title: "Tối ưu hóa quy trình & Xử lý bất đồng bộ",
         description: (
           <span>
-            Đặc tả kiến trúc bất đồng bộ{" "}
-            <strong className="text-slate-900 font-semibold">BullMQ</strong> xử lý streaming file
-            &gt; 1.000 dòng/30 giây và thu hồi phiên truy cập{" "}
-            <strong className="text-blue-700 font-bold">dưới 500 ms trên Redis</strong>, cắt giảm{" "}
-            <strong className="text-emerald-600 font-bold">&gt; 70% thời gian xử lý thủ công</strong>{" "}
-            cho toàn bộ chu kỳ vận hành.
+            Đặc tả kiến trúc hàng đợi <strong className="text-slate-900 font-semibold">BullMQ</strong> xử lý streaming file &gt; 1.000 dòng trong 30 giây, nghiệm thu tiêu chuẩn NFRs độ trễ{" "}
+            <strong className="text-blue-700 font-bold">P95 &lt; 300ms</strong> và thu hồi phiên{" "}
+            <strong className="text-blue-700 font-bold">&lt; 500ms</strong>, cắt giảm{" "}
+            <strong className="text-emerald-600 font-bold">&gt; 70% thao tác thủ công</strong>.
           </span>
         ),
       },
@@ -664,7 +643,7 @@ export default function Portfolio() {
           >
             <span>TUAN ANH</span>
             <span className="text-xs font-mono font-black px-1.5 py-0.5 rounded bg-blue-50 text-[#2563EB] border border-blue-200/80">
-              .BA
+              .TECHNICAL_BA
             </span>
           </a>
 
@@ -674,25 +653,25 @@ export default function Portfolio() {
               href="#projects"
               className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
             >
-              Dự án thực tế
+              Case Studies
             </a>
             <a
               href="#skills"
               className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
             >
-              Kỹ năng kỹ thuật
+              Năng Lực Kỹ Thuật
             </a>
             <a
               href="#experience"
               className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
             >
-              Cột mốc kinh nghiệm
+              Cột Mốc Chuyển Giao
             </a>
             <a
               href="#contact"
               className="hover:text-[#2563EB] transition-colors py-1 px-2 rounded-md hover:bg-slate-50"
             >
-              Liên hệ
+              Liên Hệ
             </a>
           </nav>
 
@@ -709,35 +688,35 @@ export default function Portfolio() {
       {/* 1. HERO SECTION */}
       <section className="py-16 md:py-24 border-b border-slate-200 bg-white relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          {/* 1. EYEBROW TAG (Huy hiệu chuyên môn) */}
+          {/* Eyebrow Tag */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-100 text-slate-800 border border-slate-200 text-xs font-semibold uppercase tracking-wider mb-6">
             <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-            <span>TECHNICAL BUSINESS ANALYST | SYSTEM ARCHITECTURE &amp; PROCESS OPTIMIZATION</span>
+            <span>TECHNICAL BUSINESS ANALYST | SYSTEM ARCHITECTURE &amp; CONCURRENCY CONTROL</span>
           </div>
 
-          {/* 2. HEADLINE & VALUE PROPOSITION (Tuyên ngôn giá trị) */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-extrabold text-slate-900 leading-[1.2] tracking-tight max-w-5xl mb-6">
-            Chuyển hóa bài toán nghiệp vụ phức tạp thành{" "}
-            <span className="text-blue-600">kiến trúc hệ thống chuẩn xác</span>, có thể đo lường và sẵn sàng chịu tải.
+          {/* Headline & Value Proposition */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[44px] font-extrabold text-slate-900 leading-[1.25] tracking-tight max-w-5xl mb-6">
+            Chuyển hóa bài toán vận hành phức tạp thành{" "}
+            <span className="text-blue-600">đặc tả kiến trúc dữ liệu chuẩn xác</span>, API Contracts nhất quán và logic giao dịch bền vững.
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 max-w-4xl leading-relaxed mb-8">
-            <strong className="text-slate-900 font-semibold">Technical Business Analyst</strong> chuyên sâu thiết kế quy trình nghiệp vụ số hóa, mô hình hóa dữ liệu quan hệ (<span className="font-semibold text-slate-900">3NF</span>) và đặc tả logic giao dịch đồng thời (<span className="font-semibold text-slate-900">Concurrency &amp; Data Integrity</span>). Thu hẹp khoảng cách giữa mục tiêu kinh doanh và hiện thực kỹ thuật thông qua tài liệu <span className="font-semibold text-slate-900">BRD, FSM, và API Contracts</span> chuẩn công nghiệp – giúp triệt tiêu rủi ro sai lệch dữ liệu và tối ưu hóa <span className="font-semibold text-emerald-600">60%+ hiệu suất vận hành</span>.
+            Kỹ sư phần mềm định hướng <strong className="text-slate-900 font-semibold">Technical Business Analyst</strong> chuyên sâu phân tích luồng nghiệp vụ end-to-end, mô hình hóa dữ liệu quan hệ (<span className="font-semibold text-slate-900">chuẩn 3NF</span>), thiết lập máy trạng thái (<span className="font-semibold text-slate-900">FSM</span>) và đặc tả kiểm soát giao dịch đồng thời (<span className="font-semibold text-slate-900">Concurrency Control</span>). Giữ vai trò cầu nối kỹ thuật vững chắc giữa Vận hành (Ops) và Đội ngũ Phát triển (Dev/QA), bảo đảm tính toàn vẹn dữ liệu và triệt tiêu sai lệch logic bằng hệ thống tài liệu <span className="font-semibold text-slate-900">BRD/SRS, Data Dictionary</span> và <span className="font-semibold text-slate-900">OpenAPI</span> chuẩn mực.
           </p>
 
-          {/* 3. DUAL CALL-TO-ACTION (CTA kép) & QUICK CONTACT */}
+          {/* Dual CTA & Quick Contact */}
           <div className="flex flex-wrap items-center gap-3.5 mb-12">
-            {/* Primary CTA: Khám Phá Dự Án & Tài Liệu Kỹ Thuật */}
+            {/* Primary CTA: Khám Phá Case Studies */}
             <a
               href="#projects"
               className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-xs active:scale-[0.98] flex items-center gap-2 text-sm md:text-base group"
             >
               <FileText className="w-4 h-4 text-blue-200 group-hover:scale-105 transition-transform" />
-              <span>Khám Phá Dự Án &amp; Tài Liệu Kỹ Thuật</span>
+              <span>Khám Phá Case Studies</span>
               <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
             </a>
 
-            {/* Secondary CTA: Tải Technical BA Resume */}
+            {/* Secondary CTA: Tải Technical BA Resume (PDF) */}
             <a
               href="/docs/Nguyen-Tuan-Anh-Technical-BA.pdf"
               target="_blank"
@@ -745,10 +724,10 @@ export default function Portfolio() {
               className="px-5 py-3 bg-white hover:bg-slate-50 text-slate-800 font-semibold border border-slate-200 hover:border-slate-300 rounded-lg transition-all shadow-2xs active:scale-[0.98] flex items-center gap-2 text-sm md:text-base group"
             >
               <Download className="w-4 h-4 text-blue-600 group-hover:-translate-y-0.5 transition-transform" />
-              <span>Tải Technical BA Resume</span>
+              <span>Tải Technical BA Resume (PDF)</span>
             </a>
 
-            {/* Kèm nút liên hệ nhanh qua LinkedIn / Email */}
+            {/* LinkedIn / Email quick links */}
             <div className="flex items-center gap-2 sm:pl-2 sm:border-l sm:border-slate-200">
               <a
                 href="https://www.linkedin.com/in/nguyntanh2k5/"
@@ -771,71 +750,71 @@ export default function Portfolio() {
             </div>
           </div>
 
-          {/* 4. SOCIAL PROOF & KEY METRICS NHANH */}
+          {/* Social Proof & Key Metrics: Chỉ số đo lường năng lực phân tích & mô hình hóa hệ thống */}
           <div className="space-y-4">
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-              <span>Chỉ số đo lường năng lực thiết kế &amp; kiến trúc hệ thống</span>
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Chỉ số đo lường năng lực phân tích &amp; mô hình hóa hệ thống</span>
             </div>
 
             {/* Metric Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Metric 1 */}
-              <div className="p-5 md:p-6 bg-slate-50/60 rounded-xl border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all group">
+              <div className="p-5 md:p-6 bg-slate-50/70 rounded-xl border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all group">
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <div className="text-2xl sm:text-3xl font-black text-emerald-600 tracking-tight">
-                    100%
+                    0%
                   </div>
                   <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                 </div>
                 <div className="text-sm font-bold text-slate-900 tracking-tight mb-1">
-                  Data Integrity
+                  Data Drift
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Triệt tiêu hoàn toàn rủi ro xuất âm kho &amp; xung đột trạng thái giao dịch (<span className="font-semibold text-slate-800">Concurrency Locking Spec</span>).
+                  Bảo đảm tính toàn vẹn dữ liệu, kiểm soát triệt để Race Condition khi phát sinh tranh chấp giao dịch đồng thời qua kịch bản kiểm thử tải.
                 </p>
               </div>
 
               {/* Metric 2 */}
-              <div className="p-5 md:p-6 bg-slate-50/60 rounded-xl border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all group">
+              <div className="p-5 md:p-6 bg-slate-50/70 rounded-xl border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all group">
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <div className="text-2xl sm:text-3xl font-black text-blue-600 tracking-tight">
-                    2+
+                    2
                   </div>
                   <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100">
                     <Database className="w-5 h-5" />
                   </div>
                 </div>
                 <div className="text-sm font-bold text-slate-900 tracking-tight mb-1">
-                  Enterprise Systems
+                  Enterprise Platforms
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Thiết kế trọn vẹn đặc tả vòng đời <span className="font-semibold text-slate-800">Smart WMS</span> (Kho vận thông minh) &amp; <span className="font-semibold text-slate-800">InternHub</span> (Quản trị nhân tài khép kín).
+                  Đặc tả toàn diện vòng đời hệ thống <span className="font-semibold text-slate-800">Smart WMS</span> (Kho vận thông minh) và <span className="font-semibold text-slate-800">InternHub</span> (Quản trị nhân tài khép kín).
                 </p>
               </div>
 
               {/* Metric 3 */}
-              <div className="p-5 md:p-6 bg-slate-50/60 rounded-xl border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all group">
+              <div className="p-5 md:p-6 bg-slate-50/70 rounded-xl border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all group">
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                    58.5%
+                    -58.5%
                   </div>
                   <div className="p-2 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
                     <TrendingUp className="w-5 h-5" />
                   </div>
                 </div>
                 <div className="text-sm font-bold text-slate-900 tracking-tight mb-1">
-                  Routing Optimization
+                  Quãng đường nhặt hàng
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Mô hình hóa thành công bài toán <span className="font-semibold text-slate-800">Heuristic &amp; định tuyến S-Shape</span> cho vận hành thực tế.
+                  Mô hình hóa thành công tập ràng buộc nghiệp vụ không gian 3D kết hợp <span className="font-semibold text-slate-800">ma trận ABC</span> và <span className="font-semibold text-slate-800">định tuyến S-Shape</span>.
                 </p>
               </div>
             </div>
 
-            {/* Kênh kết nối (LinkedIn, Email) */}
+            {/* Quick Connection Strip */}
             <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-2">
               <div className="text-xs font-semibold text-slate-700 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
@@ -865,25 +844,25 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* 2. FEATURED TECHNICAL PROJECTS (Đặt ngay sau Hero Section) */}
+      {/* 2. FEATURED TECHNICAL CASE STUDIES */}
       <section id="projects" className="py-16 md:py-24 border-b border-slate-200 bg-white scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-3">
                 <Boxes className="w-3.5 h-3.5 text-blue-600" />
-                <span>Enterprise Case Studies &amp; System Specs</span>
+                <span>Featured Technical Case Studies</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                Featured Technical Projects
+                Featured Technical Case Studies
               </h2>
             </div>
-            <p className="text-sm sm:text-base text-slate-600 max-w-lg">
-              Đặc tả kiến trúc hệ thống, xử lý đồng thời (Concurrency), mô hình hóa dữ liệu 3NF và tối ưu hóa quy trình vận hành đo lường chuẩn Google XYZ.
+            <p className="text-sm sm:text-base text-slate-600 max-w-lg leading-relaxed">
+              Đặc tả hệ thống, mô hình hóa dữ liệu 3NF, kiểm soát đồng thời và tối ưu hóa luồng nghiệp vụ theo chuẩn đo lường tác động (Google XYZ).
             </p>
           </div>
 
-          <div className="space-y-10">
+          <div className="space-y-12">
             {FEATURED_PROJECTS.map((project) => (
               <article
                 key={project.id}
@@ -898,50 +877,52 @@ export default function Portfolio() {
                         <span className="font-mono text-xs font-bold px-2.5 py-1 rounded bg-slate-900 text-white tracking-wider">
                           {project.badgeNumber}
                         </span>
-                        <span className="text-xs font-medium px-3 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200/80">
+                        <span className="text-xs font-semibold px-3 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200/70 uppercase">
                           {project.domain}
                         </span>
                       </div>
-                      <div className="text-xs font-medium text-slate-600 bg-slate-50 px-3 py-1 rounded-md border border-slate-200/80">
-                        Vai trò: <span className="text-slate-900 font-semibold">{project.role}</span>
+                      <div className="text-xs font-medium text-slate-600 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200/80">
+                        Vai trò: <span className="text-slate-900 font-bold">{project.role}</span>
                       </div>
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-2.5">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">
                       {project.title}
                     </h3>
-                    <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-5xl">
-                      <strong className="text-slate-900 font-semibold">Tên dự án &amp; Bối cảnh:</strong>{" "}
+                    <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 text-sm sm:text-base text-slate-700 leading-relaxed">
+                      <strong className="text-slate-900 font-bold">Bối cảnh &amp; Bài toán:</strong>{" "}
                       {project.context}
-                    </p>
+                    </div>
                   </div>
 
-                  {/* Problem & Solution Dual Grid */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                    {/* Vấn Đề */}
-                    <div className="p-5 sm:p-6 rounded-xl bg-slate-50/70 border border-slate-200/80 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5">
-                          <span className="w-2 h-2 rounded-full bg-rose-500" />
-                          <span>Vấn Đề Vận Hành &amp; Thách Thức Kỹ Thuật</span>
-                        </div>
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                          {project.problem}
-                        </p>
-                      </div>
+                  {/* Thách thức Vận hành & Phân tích Kỹ thuật (Analysis & Action) */}
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                      <Workflow className="w-4 h-4 text-blue-600" />
+                      <span>Thách thức Vận hành &amp; Phân tích Kỹ thuật (Analysis &amp; Action)</span>
                     </div>
 
-                    {/* Giải Pháp (Action) */}
-                    <div className="p-5 sm:p-6 rounded-xl bg-slate-50/70 border border-slate-200/80 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 mb-2.5">
-                          <span className="w-2 h-2 rounded-full bg-blue-600" />
-                          <span>Giải Pháp Đặc Tả &amp; Kiến Trúc BA (Action)</span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {project.analysisActions.map((action, aIdx) => (
+                        <div
+                          key={aIdx}
+                          className="p-5 rounded-xl bg-slate-50/70 border border-slate-200/90 shadow-2xs hover:bg-white hover:border-slate-300 transition-all flex flex-col justify-between"
+                        >
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="w-6 h-6 rounded-md bg-blue-600 text-white font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                {aIdx + 1}
+                              </span>
+                              <h4 className="text-sm font-bold text-slate-900 tracking-tight">
+                                {action.title}
+                              </h4>
+                            </div>
+                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                              {action.detail}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                          {project.solution}
-                        </p>
-                      </div>
+                      ))}
                     </div>
                   </div>
 
@@ -982,10 +963,7 @@ export default function Portfolio() {
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
                         <div className="flex items-center gap-2">
                           <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-800 text-slate-300 border border-slate-700 uppercase tracking-wider">
-                            Google XYZ Impact
-                          </span>
-                          <span className="text-xs text-slate-400 hidden sm:inline">
-                            Accomplished <strong>[X]</strong> as measured by <strong>[Y]</strong>, by doing <strong>[Z]</strong>
+                            Tác động đo lường kiểm chứng (Google XYZ Metric)
                           </span>
                         </div>
                         <div className="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded border border-emerald-800/60 flex items-center gap-1.5">
@@ -1004,11 +982,11 @@ export default function Portfolio() {
 
                   {/* Artifacts & Tech Stack */}
                   <div className="pt-2 border-t border-slate-200/80 space-y-4">
-                    {/* Deliverables */}
+                    {/* Deliverables (Artifacts) */}
                     <div>
                       <div className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5 flex items-center gap-2">
                         <FileText className="w-4 h-4 text-blue-600" />
-                        <span>Artifacts &amp; Deliverables:</span>
+                        <span>Sản phẩm bàn giao (Artifacts):</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {project.deliverables.map((item, dIdx) => (
@@ -1022,11 +1000,11 @@ export default function Portfolio() {
                       </div>
                     </div>
 
-                    {/* Tech Stack Analyzed */}
+                    {/* Tech Stack Context */}
                     <div>
                       <div className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5 flex items-center gap-2">
                         <Database className="w-4 h-4 text-slate-600" />
-                        <span>Tech Stack Analyzed:</span>
+                        <span>Hệ thống phân tích (Tech Stack Context):</span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {project.techStack.map((tech, tIdx) => (
@@ -1067,21 +1045,21 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* 3. TECHNICAL SKILLS & CORE COMPETENCIES (Đặt ngay sau Featured Projects) */}
+      {/* 3. TECHNICAL BA COMPETENCIES (Năng lực Phân tích & Kỹ thuật Hệ thống) */}
       <section id="skills" className="py-16 md:py-24 border-b border-slate-200 bg-slate-50/50 scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white border border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-3">
                 <Workflow className="w-3.5 h-3.5 text-blue-600" />
-                <span>Architecture &amp; Engineering Matrix</span>
+                <span>Technical BA Competencies</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                Technical Skills &amp; Core Competencies
+                Năng lực Phân tích &amp; Kỹ thuật Hệ thống
               </h2>
             </div>
-            <p className="text-sm sm:text-base text-slate-600 max-w-lg">
-              Hệ thống năng lực kỹ thuật chuẩn hóa 4 tầng kiến trúc – từ mô hình hóa nghiệp vụ &amp; cơ chế kiểm soát giao dịch đồng thời đến an ninh bảo mật và quy trình Agile công nghiệp.
+            <p className="text-sm sm:text-base text-slate-600 max-w-lg leading-relaxed">
+              Bộ kỹ năng chuẩn hóa 4 trụ cột kết nối chặt chẽ giữa Nghiệp vụ (Business) và Kiến trúc Kỹ thuật (Technical Architecture).
             </p>
           </div>
 
@@ -1104,10 +1082,10 @@ export default function Portfolio() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="p-2 rounded-lg bg-slate-100 text-slate-700 border border-slate-200/60 shrink-0">
-                        {pillar.iconName === "server" && <Server className="w-5 h-5" />}
-                        {pillar.iconName === "database" && <Database className="w-5 h-5" />}
-                        {pillar.iconName === "layout" && <Layout className="w-5 h-5" />}
-                        {pillar.iconName === "shield" && <ShieldCheck className="w-5 h-5" />}
+                        {pillar.iconName === "workflow" && <Workflow className="w-5 h-5 text-blue-600" />}
+                        {pillar.iconName === "database" && <Database className="w-5 h-5 text-emerald-600" />}
+                        {pillar.iconName === "server" && <Server className="w-5 h-5 text-purple-600" />}
+                        {pillar.iconName === "users" && <Users className="w-5 h-5 text-amber-600" />}
                       </div>
                       <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-snug">
                         {pillar.title}
@@ -1115,7 +1093,7 @@ export default function Portfolio() {
                     </div>
                   </div>
 
-                  {/* 4 Sub-Categories */}
+                  {/* Sub-Categories */}
                   <div className="space-y-4 pt-4 border-t border-slate-100">
                     {pillar.subCategories.map((sub, sIdx) => (
                       <div key={sIdx} className="space-y-2">
@@ -1128,22 +1106,26 @@ export default function Portfolio() {
                             const isKeyTechnical =
                               item.includes("3NF") ||
                               item.includes("FSM") ||
-                              item.includes("SELECT") ||
-                              item.includes("ORDER BY") ||
+                              item.includes("SRS") ||
+                              item.includes("BRD") ||
+                              item.includes("UML") ||
+                              item.includes("BPMN") ||
+                              item.includes("Pessimistic") ||
+                              item.includes("Deadlock") ||
+                              item.includes("ACID") ||
                               item.includes("JSONB") ||
                               item.includes("BullMQ") ||
-                              item.includes("NestJS") ||
-                              item.includes("PostgreSQL") ||
-                              item.includes("MySQL") ||
-                              item.includes("OAuth2") ||
-                              item.includes("Outbox Pattern");
+                              item.includes("OpenAPI") ||
+                              item.includes("Agile") ||
+                              item.includes("P95") ||
+                              item.includes("TPS");
 
                             return (
                               <span
                                 key={iIdx}
                                 className={`text-xs px-2.5 py-1 rounded-md transition-colors ${
                                   isKeyTechnical
-                                    ? "bg-blue-50/60 text-blue-800 font-medium border border-blue-200/70 font-mono"
+                                    ? "bg-blue-50/70 text-blue-800 font-medium border border-blue-200/70"
                                     : "bg-slate-50 text-slate-600 border border-slate-200/70 hover:bg-slate-100 hover:text-slate-900"
                                 }`}
                               >
@@ -1162,20 +1144,20 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* 4. EXPERIENCES & DELIVERY MILESTONES (Đặt ngay sau Phần 3) */}
+      {/* 4. EXPERIENCES & DELIVERY MILESTONES (Cột mốc Chuyển giao & Kinh nghiệm Thực chiến) */}
       <section id="experience" className="py-16 md:py-24 border-b border-slate-200 bg-white scroll-mt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-3">
                 <Milestone className="w-3.5 h-3.5 text-blue-600" />
-                <span>Proven Delivery Track Record</span>
+                <span>Delivery Milestones</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                Experiences &amp; Delivery Milestones
+                Cột mốc Chuyển giao &amp; Kinh nghiệm Thực chiến
               </h2>
             </div>
-            <p className="text-sm sm:text-base text-slate-600 max-w-lg">
+            <p className="text-sm sm:text-base text-slate-600 max-w-lg leading-relaxed">
               Hành trình chuyển giao giá trị thực tế: Từ nghiên cứu mô hình hóa giải thuật, kiểm soát giao dịch đồng thời đến nghiệm thu tải k6 và bàn giao Sprints đúng hạn.
             </p>
           </div>
@@ -1205,23 +1187,23 @@ export default function Portfolio() {
                   <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs sm:text-sm text-slate-600">
                     <div className="flex items-center gap-1.5 font-medium">
                       <Briefcase className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span className="text-slate-500">Vị trí:</span>
+                      <span className="text-slate-500">Vai trò:</span>
                       <strong className="text-slate-900 font-semibold">{milestone.role}</strong>
                     </div>
                     <span className="text-slate-300 hidden sm:inline">•</span>
                     <div className="flex items-center gap-1.5 font-medium">
                       <Users className="w-4 h-4 text-slate-600 shrink-0" />
-                      <span className="text-slate-500">Quy mô &amp; Mô hình:</span>
+                      <span className="text-slate-500">Mô hình triển khai:</span>
                       <strong className="text-slate-800 font-semibold">{milestone.teamScale}</strong>
                     </div>
                   </div>
                 </div>
 
-                {/* Đóng góp & Dấu ấn đo lường */}
+                {/* Dấu ấn thực hiện (Đóng góp & Dấu ấn đo lường) */}
                 <div className="pt-6 space-y-4">
                   <div className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2 mb-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                    <span>Đóng góp &amp; Dấu ấn đo lường:</span>
+                    <span>Dấu ấn thực hiện:</span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1258,7 +1240,7 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
           {/* Availability Badge & Core CTA Headline */}
           <div className="flex flex-col items-center text-center mb-12">
-            {/* 1. Availability Badge (Tình trạng tuyển dụng hiện tại) */}
+            {/* Availability Badge */}
             <div className="inline-flex flex-wrap items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-slate-800 text-xs sm:text-sm font-medium shadow-2xs mb-6">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -1269,7 +1251,7 @@ export default function Portfolio() {
               <span className="text-slate-600 font-normal">Sẵn sàng onboard ngay tại Hà Nội hoặc Hybrid/Remote</span>
             </div>
 
-            {/* 2. Core Call-to-Action Headline (Lời mời hợp tác sắc bén) */}
+            {/* Core Call-to-Action Headline */}
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-snug max-w-3xl mb-3">
               "Sẵn sàng chuyển hóa bài toán nghiệp vụ phức tạp thành kiến trúc hệ thống bền vững cùng doanh nghiệp của bạn."
             </h2>
@@ -1278,9 +1260,9 @@ export default function Portfolio() {
             </p>
           </div>
 
-          {/* 3. Direct Contact Hub (Kênh liên hệ trực tiếp & Tương tác nhanh) */}
+          {/* Direct Contact Hub */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-            {/* Email (Click-to-Copy & Mailto) */}
+            {/* Email */}
             <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
@@ -1327,7 +1309,7 @@ export default function Portfolio() {
               </div>
             </div>
 
-            {/* Điện thoại / Zalo */}
+            {/* Phone / Zalo */}
             <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
@@ -1366,7 +1348,7 @@ export default function Portfolio() {
               </div>
             </div>
 
-            {/* Địa bàn làm việc */}
+            {/* Location */}
             <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
@@ -1409,7 +1391,6 @@ export default function Portfolio() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
-              {/* One-Click Asset: Nút tải trực tiếp */}
               <a
                 href="/docs/Nguyen-Tuan-Anh-Technical-BA.pdf"
                 target="_blank"
@@ -1420,7 +1401,6 @@ export default function Portfolio() {
                 <span>Download Technical BA Resume (PDF)</span>
               </a>
 
-              {/* LinkedIn Profile */}
               <a
                 href="https://www.linkedin.com/in/nguyntanh2k5/"
                 target="_blank"
@@ -1435,15 +1415,13 @@ export default function Portfolio() {
             </div>
           </div>
 
-          {/* 4. Engineering Footer & Integrity Statement (Cam kết chuẩn mực) */}
+          {/* Engineering Footer & Integrity Statement */}
           <div className="pt-8 border-t border-slate-200 text-center space-y-4">
-            {/* Tuyên ngôn chất lượng */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-white text-slate-700 text-xs font-mono font-medium border border-slate-200 shadow-2xs">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span>"Designed with strict architectural mindset. Verified for zero data drift &amp; high transactional reliability."</span>
             </div>
 
-            {/* Copyright & Tech Stack Badge */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 pt-2">
               <div>
                 © 2026 <strong className="text-slate-800 font-semibold">Nguyễn Tuấn Anh</strong>. All rights reserved.

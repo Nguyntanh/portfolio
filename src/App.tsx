@@ -55,7 +55,9 @@ interface CaseStudy {
   tag: string;
   title: string;
   role: string;
+  scale: string;
   context: string;
+  starDescription: ReactNode;
   actions: ProjectActionItem[];
   metrics: ProjectMetric[];
   results: ReactNode[];
@@ -69,10 +71,20 @@ const CASE_STUDIES: CaseStudy[] = [
   {
     id: "smart-wms",
     tag: "Kho vận & Chuỗi cung ứng",
-    title: "Hệ thống Quản lý Kho hàng Thông minh (Smart WMS)",
+    title: "Smart WMS (Hệ thống Quản lý Kho thông minh)",
     role: "Technical Business Analyst (Core System Modeler)",
+    scale: "Nhóm 5 kỹ sư | Chu kỳ 4 tháng (06/2026 – 09/2026)",
     context:
-      "Nền tảng quản trị kho hàng đa chi nhánh giải quyết bài toán lãng phí thể tích lưu trữ (25–40%), rút ngắn thời gian gom hàng (từ 15–30 phút/đơn) và loại bỏ nguy cơ xuất âm kho do tranh chấp dữ liệu khi nhiều nhân viên cùng xử lý một mã hàng (SKU).",
+      "Nền tảng quản trị kho hàng đa chi nhánh giải quyết bài toán lãng phí thể tích lưu trữ (25–40%), rút ngắn thời gian gom hàng và loại bỏ nguy cơ xuất âm kho do tranh chấp dữ liệu khi nhiều nhân viên cùng xử lý một mã hàng (SKU).",
+    starDescription: (
+      <span>
+        Đối mặt với bài toán lãng phí 25–40% thể tích kho và rủi ro xuất âm khi nhiều nhân viên nhặt cùng SKU, tôi trực tiếp chuẩn hóa SRS với 10 quy tắc nghiệp vụ bất biến cho 4 luồng Inbound, Outbound, Put-away, Picking qua 12+ sơ đồ UML. Về mặt kiến trúc dữ liệu, tôi thiết kế Data Dictionary cho 18 bảng chuẩn 3NF, đồng thời phối hợp đặc tả giải pháp Row-level Pessimistic Locking (
+        <code className="bg-slate-200/80 text-slate-800 px-1 py-0.5 rounded font-mono text-xs font-semibold">
+          SELECT ... FOR UPDATE
+        </code>
+        ) trên MySQL InnoDB. Kết quả, hệ thống kiểm chứng loại bỏ hoàn toàn Race Condition (<strong>0% Data Drift</strong>) dưới tải 500 người dùng ảo đồng thời (412 TPS, P95 &lt; 380ms), đồng thời thuật toán gợi ý vị trí theo không gian 3D và ma trận ABC giúp tăng 22.8% dung tích khai thác và cắt giảm 58.5% quãng đường di chuyển.
+      </span>
+    ),
     actions: [
       {
         title: "Quy chuẩn hóa nghiệp vụ",
@@ -139,10 +151,9 @@ const CASE_STUDIES: CaseStudy[] = [
       ),
     ],
     artifacts: [
-      "BRD / SRS Document",
-      "Data Dictionary (18 bảng 3NF)",
-      "Use Case & Sequence Diagrams",
-      "NFRs Verification Report",
+      "SRS & Business Invariants Spec",
+      "Data Dictionary (18 Tables, 3NF)",
+      "Concurrency Test Report (412 TPS, P95 < 380ms)",
     ],
     techStack: ["MySQL 8.0 (InnoDB)", "TypeORM", "Redis", "NestJS", "React", "Docker"],
     links: [
@@ -164,10 +175,16 @@ const CASE_STUDIES: CaseStudy[] = [
   {
     id: "internhub",
     tag: "Quản trị Nhân tài Doanh nghiệp",
-    title: "Nền tảng Quản lý Thực tập sinh Tập trung (InternHub)",
+    title: "InternHub (Nền tảng Quản trị Thực tập sinh)",
     role: "Technical Business Analyst (Workflows & Architecture)",
+    scale: "Nhóm 5 kỹ sư | 5 Sprints (01/2026 – 04/2026)",
     context:
       "Số hóa toàn diện vòng đời thực tập sinh thay thế quy trình thủ công qua Excel/Zalo; tự động hóa cấp và thu hồi quyền truy cập, giảm tải tác vụ hành chính và chuẩn hóa thang đo thẩm định năng lực đa chiều.",
+    starDescription: (
+      <span>
+        Nhằm số hóa quy trình quản lý thực tập sinh phân tán qua Excel và kiểm soát độ lệch điểm đánh giá cảm tính, tôi chịu trách nhiệm phân rã 33 INVEST User Stories và chuẩn hóa 38 RESTful API Contracts kèm Error Catalog trên OpenAPI. Về thiết kế lõi, tôi xây dựng Data Dictionary 26 bảng, ứng dụng Finite State Machine (FSM) và cấu trúc JSONB Snapshots đóng băng tiêu chí Rubric nhằm đảm bảo toàn vẹn dữ liệu truy vết (Audit Trail). Giải pháp giúp đội ngũ bàn giao <strong>100% phạm vi MVP</strong> đúng hạn qua 5 Sprints, cắt giảm hơn 70% thao tác xử lý thủ công và xử lý import streaming &gt; 1.000 bản ghi trong 30 giây qua hàng đợi BullMQ.
+      </span>
+    ),
     actions: [
       {
         title: "Chuẩn hóa luồng & API Contracts",
@@ -228,10 +245,9 @@ const CASE_STUDIES: CaseStudy[] = [
       ),
     ],
     artifacts: [
-      "BRD / SRS Document",
-      "User Stories & INVEST Backlog",
-      "API Contracts Master (OpenAPI)",
-      "Edge Cases & Concurrency Risk Matrix",
+      "33 INVEST User Stories & Acceptance Criteria",
+      "OpenAPI 3.0 Contracts & Error Catalog (38 Endpoints)",
+      "FSM State Transition & JSONB Audit Model",
     ],
     techStack: ["PostgreSQL 16 (JSONB & GIN)", "Redis", "BullMQ", "NestJS", "React", "Docker"],
     links: [
@@ -450,14 +466,18 @@ export default function Portfolio() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl md:text-[42px] font-extrabold text-slate-900 tracking-tight leading-[1.25] mb-6 max-w-4xl">
-              Chuyển hóa bài toán vận hành phức tạp thành{" "}
-              <span className="text-blue-600">đặc tả kiến trúc dữ liệu chuẩn xác</span>, API Contracts nhất quán và logic giao dịch bền vững.
+            <h1 className="text-3xl sm:text-4xl md:text-[42px] font-extrabold text-slate-900 tracking-tight leading-[1.25] mb-5 max-w-4xl">
+              Kỹ sư Hệ thống định hướng{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700">
+                Technical Business Analyst
+              </span>
             </h1>
 
-            {/* Paragraph / Intro */}
+            {/* Sub-headline */}
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-3xl mb-8">
-              Kỹ sư phần mềm định hướng <strong>Technical Business Analyst</strong> chuyên sâu phân tích luồng nghiệp vụ end-to-end, mô hình hóa dữ liệu quan hệ (chuẩn 3NF), thiết lập máy trạng thái (FSM) và kiểm soát giao dịch đồng thời (Concurrency Control). Đóng vai trò cầu nối kỹ thuật vững chắc giữa Vận hành và Đội ngũ Phát triển, bảo đảm tính toàn vẹn dữ liệu qua hệ thống tài liệu <strong>BRD/SRS, Data Dictionary</strong> và <strong>OpenAPI</strong> chuẩn mực.
+              Chuyển hóa bài toán vận hành phức tạp thành <strong>Data Dictionary 3NF chuẩn mực</strong>,{" "}
+              <strong>OpenAPI Contracts nhất quán</strong> và logic kiểm soát giao dịch đồng thời không lỗi (
+              <strong>Zero Data Drift</strong>).
             </p>
 
             {/* CTA Buttons */}
@@ -500,29 +520,29 @@ export default function Portfolio() {
               </div>
             </div>
 
-            {/* Key Metrics Strip */}
+            {/* Core Metrics Bar */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
               <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70">
                 <div className="text-2xl font-bold text-slate-900 mb-0.5">0% Data Drift</div>
-                <div className="text-xs font-semibold text-slate-700 mb-1">Toàn vẹn dữ liệu tuyệt đối</div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Kiểm soát triệt để Race Condition khi phát sinh tranh chấp giao dịch qua kịch bản kiểm thử tải.
+                <div className="text-xs font-semibold text-blue-700 mb-1">Toàn vẹn giao dịch</div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Triệt tiêu Race Condition &amp; lỗi xuất âm kho dưới tải 500 VUs.
                 </p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70">
-                <div className="text-2xl font-bold text-blue-600 mb-0.5">2 Nền tảng</div>
-                <div className="text-xs font-semibold text-slate-700 mb-1">Enterprise Systems</div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Đặc tả toàn diện vòng đời hệ thống Smart WMS (Kho vận) và InternHub (Quản trị nhân tài).
+                <div className="text-2xl font-bold text-emerald-600 mb-0.5">-58.5% Quãng đường</div>
+                <div className="text-xs font-semibold text-emerald-800 mb-1">Tối ưu lộ trình</div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Tối ưu hóa định tuyến nhặt hàng S-Shape &amp; phân bổ ABC.
                 </p>
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70">
-                <div className="text-2xl font-bold text-emerald-600 mb-0.5">-58.5%</div>
-                <div className="text-xs font-semibold text-slate-700 mb-1">Quãng đường nhặt hàng</div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Mô hình hóa tập ràng buộc không gian 3D kết hợp ma trận ABC và định tuyến S-Shape.
+                <div className="text-2xl font-bold text-blue-600 mb-0.5">100% On-time MVP</div>
+                <div className="text-xs font-semibold text-slate-700 mb-1">Cam kết Sprint</div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Phân rã 33 INVEST User Stories &amp; 38 API Contracts qua 5 Sprints.
                 </p>
               </div>
             </div>
@@ -552,22 +572,39 @@ export default function Portfolio() {
                 >
                   {/* Top Header */}
                   <div className="mb-6">
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                      <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100">
                         {project.tag}
                       </span>
-                      <span className="text-xs text-slate-500 font-medium">
-                        Vai trò: <strong className="text-slate-800 font-semibold">{project.role}</strong>
-                      </span>
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                        <span>
+                          Vai trò: <strong className="text-slate-800 font-semibold">{project.role}</strong>
+                        </span>
+                        <span className="text-slate-300">•</span>
+                        <span>
+                          Quy mô: <strong className="text-slate-700 font-medium">{project.scale}</strong>
+                        </span>
+                      </div>
                     </div>
 
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3.5">
                       {project.title}
                     </h3>
 
-                    <p className="text-sm text-slate-600 leading-relaxed bg-slate-50/70 p-4 rounded-xl border border-slate-100">
-                      <strong className="text-slate-900 font-medium">Bối cảnh &amp; Vấn đề:</strong> {project.context}
-                    </p>
+                    {/* Đoạn mô tả STAR/XYZ */}
+                    <div className="p-4 sm:p-5 rounded-xl bg-slate-50/90 border border-slate-200/80 text-sm leading-relaxed text-slate-700">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-0.5 rounded bg-blue-600 text-white font-mono text-[10px] font-bold tracking-wide uppercase">
+                          Mô tả STAR / XYZ
+                        </span>
+                        <span className="text-xs font-bold text-slate-800">
+                          Bối cảnh, Chuẩn hóa Nghiệp vụ &amp; Tác động Hệ thống
+                        </span>
+                      </div>
+                      <div className="text-slate-700 leading-relaxed text-sm sm:text-[14px]">
+                        {project.starDescription}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Actions Taken (3 key points) */}
@@ -630,12 +667,12 @@ export default function Portfolio() {
                     <div className="flex flex-wrap items-center gap-2 text-xs">
                       <span className="font-semibold text-slate-700 mr-1 flex items-center gap-1">
                         <FileText className="w-3.5 h-3.5 text-blue-600" />
-                        Sản phẩm bàn giao:
+                        Key Deliverables:
                       </span>
                       {project.artifacts.map((art, artIdx) => (
                         <span
                           key={artIdx}
-                          className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium"
+                          className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 border border-blue-100 font-medium text-xs shadow-2xs"
                         >
                           {art}
                         </span>
